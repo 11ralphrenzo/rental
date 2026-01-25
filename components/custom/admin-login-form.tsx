@@ -1,12 +1,14 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { AuthRequest } from "@/models/auth";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { saveAdmin } from "@/app/services/local-storage";
 
 function AdminLoginForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -28,12 +30,13 @@ function AdminLoginForm() {
     toast.dismiss();
 
     if (!res.ok) {
-      toast.error(result.message || "Login failed!");
       reset({ password: "" });
+      toast.error(result.message || "Login failed!");
     } else {
+      reset();
+      saveAdmin(result);
       toast.success("Logged in successfully!");
-      console.log("Admin logged in:", result);
-      // redirect to admin dashboard
+      router.replace("/admin/main");
     }
   };
 

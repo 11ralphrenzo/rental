@@ -61,8 +61,6 @@ export async function POST(req: NextRequest) {
 //     // Hash password
 //     const hashedPassword = await bcrypt.hash(password, 10);
 
-//     console.log(hashedPassword);
-
 //     // Insert new admin
 //     const { data: newAdmin, error: insertError } = await supabase
 //       .from("admins")
