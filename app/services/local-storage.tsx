@@ -12,8 +12,6 @@ export const saveAdmin = (admin: Admin) => {
 };
 
 export function getAdmin<T>() {
-  if (typeof window === "undefined") return null;
-
   const raw = getEncryptedItem<T>(KEY);
   return raw ? (JSON.parse(String(raw)) as Admin) : null;
 }
