@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { saveAdmin } from "@/app/services/local-storage";
+import { AxiosError } from "axios";
+import { Login } from "@/app/services/auth-service";
 
 function AdminLoginForm() {
   const router = useRouter();
@@ -19,24 +21,27 @@ function AdminLoginForm() {
   const onSubmit = async (data: AuthRequest) => {
     toast.loading("Logging in...");
 
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    const result = await res.json();
-
-    toast.dismiss();
-
-    if (!res.ok) {
-      reset({ password: "" });
-      toast.error(result.message || "Login failed!");
-    } else {
+    try {
+      const result = await Login(data);
+      toast.dismiss();
       reset();
-      saveAdmin(result);
+      saveAdmin(result.data);
       toast.success("Logged in successfully!");
-      router.replace("/admin/main");
+      router.replace("/admin");
+    } catch (err) {
+      reset();
+      const error = err as AxiosError;
+      if (error.response) {
+        // Request made and server responded
+        console.log("Status:", error.response.status);
+        console.log("Data:", error.response.data);
+      } else if (error.request) {
+        // Request was made but no response
+        console.log("No response received:", error.request);
+      } else {
+        // Something else caused the error
+        console.log("Error:", error.message);
+      }
     }
   };
 
