@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
       type: admin.type,
     });
   } catch (err) {
-    console.error(err);
     return NextResponse.json(
       { message: "Something went wrong" + err },
       { status: 500 },
@@ -85,7 +84,6 @@ export async function POST(req: NextRequest) {
 //       name: newAdmin.name,
 //     });
 //   } catch (err) {
-//     console.error(err);
 //     return NextResponse.json(
 //       { message: "Something went wrong" },
 //       { status: 500 },

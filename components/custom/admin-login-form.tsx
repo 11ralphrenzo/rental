@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { saveAdmin } from "@/app/services/local-storage";
 import { AxiosError } from "axios";
 import { Login } from "@/app/services/auth-service";
+import { handleAxiosError } from "@/lib/utils";
 
 function AdminLoginForm() {
   const router = useRouter();
@@ -30,18 +31,7 @@ function AdminLoginForm() {
       router.replace("/admin/houses");
     } catch (err) {
       reset();
-      const error = err as AxiosError;
-      if (error.response) {
-        // Request made and server responded
-        console.log("Status:", error.response.status);
-        console.log("Data:", error.response.data);
-      } else if (error.request) {
-        // Request was made but no response
-        console.log("No response received:", error.request);
-      } else {
-        // Something else caused the error
-        console.log("Error:", error.message);
-      }
+      handleAxiosError(err);
     }
   };
 

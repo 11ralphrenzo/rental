@@ -26,18 +26,12 @@ export const handleAxiosError = (
     const data = axiosError.response.data;
     errorMessage =
       data?.message || data?.error || `Error: ${axiosError.response.status}`;
-    console.error("API Error:", {
-      status: axiosError.response.status,
-      data: axiosError.response.data,
-    });
   } else if (axiosError.request) {
     // Request was made but no response
     errorMessage = "No response from server. Please check your connection.";
-    console.error("No response received:", axiosError.request);
   } else {
     // Something else caused the error
     errorMessage = axiosError.message || defaultMessage;
-    console.error("Error:", axiosError.message);
   }
 
   toast.error(errorMessage);
@@ -45,10 +39,13 @@ export const handleAxiosError = (
 
 // Date formatting utilities
 
-export const formatDate = (date: Date | string | null | undefined): string => {
+export const formatDate = (
+  date: Date | string | null | undefined,
+  dateFormat: string | undefined = "MMM dd, yyyy",
+): string => {
   if (!date) return "-";
   const dateObj = typeof date === "string" ? new Date(date) : date;
-  return format(dateObj, "MMM dd, yyyy");
+  return format(dateObj, dateFormat);
 };
 
 export const formatDateShort = (

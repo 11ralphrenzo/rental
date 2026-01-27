@@ -18,7 +18,6 @@ export const getEncryptedItem = <T>(key: string): T | null => {
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
     return JSON.parse(decrypted) as T;
   } catch (err) {
-    console.error("Failed to decrypt:", err);
     return null;
   }
 };

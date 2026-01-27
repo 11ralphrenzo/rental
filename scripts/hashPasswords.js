@@ -14,7 +14,6 @@ async function hashPasswords() {
     .from("admins")
     .select("id, password");
   if (error || !users) {
-    console.error("Error fetching admins:", error);
     return;
   }
 

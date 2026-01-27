@@ -13,7 +13,7 @@ import {
 
 interface DatePickerProps {
   className?: string;
-  value?: Date;
+  value?: Date | string;
   onChange: (date: Date | undefined) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -26,6 +26,12 @@ export const DefDatePicker = ({
   placeholder = "Pick a date",
   disabled = false,
 }: DatePickerProps) => {
+  const dateValue = value
+    ? typeof value === "string"
+      ? new Date(value)
+      : value
+    : undefined;
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -33,19 +39,19 @@ export const DefDatePicker = ({
           variant="outline"
           className={cn(
             "justify-start text-left font-normal",
-            !value && "text-muted-foreground",
+            !dateValue && "text-muted-foreground",
             className,
           )}
           disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "PPP") : placeholder}
+          {dateValue ? format(dateValue, "PPP") : placeholder}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={value}
+          selected={dateValue}
           onSelect={onChange}
           disabled={disabled}
           initialFocus
