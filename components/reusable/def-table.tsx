@@ -35,7 +35,19 @@ export function DefTable<T>({
       </TableHeader>
 
       {/* Body */}
-      <TableBody>{data.map((row, idx) => renderRow(row, idx))}</TableBody>
+      {data && data.length > 0 ? (
+        <TableBody>{data.map((row, idx) => renderRow(row, idx))}</TableBody>
+      ) : (
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={columns.length}>
+              <div className="flex w-full h-50 items-center justify-center">
+                <span className="font-semibold">No Data</span>
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      )}
 
       {/* Footer (optional) */}
       {footer && (

@@ -1,11 +1,11 @@
 import { supabase } from "@/lib/supabaseClient";
-import { House } from "@/models/house";
+import { Renter } from "@/models/renter";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   const { data, error } = await supabase
-    .from("houses")
-    .select("*")
+    .from("renters")
+    .select("*, houses(id, name)")
     .order("name", { ascending: true });
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -14,11 +14,19 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, name, monthly }: House = await req.json();
+    const {
+      id,
+      name,
+      houseId,
+      pin_hash,
+      active,
+      start_date,
+      end_date,
+    }: Renter = await req.json();
 
     const { data, error } = await supabase
-      .from("houses")
-      .insert({ id, name, monthly })
+      .from("renters")
+      .insert({ id, name, houseId, pin_hash, active, start_date, end_date })
       .select()
       .single();
 
@@ -40,11 +48,19 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const { id, name, monthly }: House = await req.json();
+    const {
+      id,
+      name,
+      houseId,
+      pin_hash,
+      active,
+      start_date,
+      end_date,
+    }: Renter = await req.json();
 
     const { data, error } = await supabase
-      .from("houses")
-      .update({ name, monthly })
+      .from("renters")
+      .update({ name, houseId, pin_hash, active, start_date, end_date })
       .eq("id", id)
       .select()
       .single();
@@ -65,8 +81,13 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-const formatResponse = (house: House) => ({
-  id: house.id,
-  name: house.name,
-  monthly: house.monthly,
+const formatResponse = (renter: Renter) => ({
+  id: renter.id,
+  name: renter.name,
+  houseId: renter.houseId,
+  house: renter.houses,
+  pin_hash: renter.pin_hash,
+  start_date: renter.start_date,
+  end_date: renter.end_date,
+  active: renter.active,
 });

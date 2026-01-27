@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,4 +41,28 @@ export const handleAxiosError = (
   }
 
   toast.error(errorMessage);
+};
+
+// Date formatting utilities
+
+export const formatDate = (date: Date | string | null | undefined): string => {
+  if (!date) return "-";
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "MMM dd, yyyy");
+};
+
+export const formatDateShort = (
+  date: Date | string | null | undefined,
+): string => {
+  if (!date) return "-";
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "MM/dd/yy");
+};
+
+export const formatDateTime = (
+  date: Date | string | null | undefined,
+): string => {
+  if (!date) return "-";
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return format(dateObj, "MMM dd, yyyy HH:mm");
 };

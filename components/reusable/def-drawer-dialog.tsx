@@ -81,7 +81,7 @@ export const DrawerDialog: React.FC<DrawerDialogProps> = ({
           if (!open && onClose) onClose();
         }}
       >
-        <DialogContent className={cn("sm:max-w-[425px]", className)}>
+        <DialogContent className={cn("w-fit", className)}>
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
             {description && (
