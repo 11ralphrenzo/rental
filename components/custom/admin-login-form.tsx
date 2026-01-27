@@ -27,7 +27,7 @@ function AdminLoginForm() {
       reset();
       saveAdmin(result.data);
       toast.success("Logged in successfully!");
-      router.replace("/admin");
+      router.replace("/admin/houses");
     } catch (err) {
       reset();
       const error = err as AxiosError;

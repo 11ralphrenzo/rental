@@ -13,17 +13,13 @@ export async function DELETE(request: Request) {
         { status: 400 },
       );
 
-    // Fetch admin by email
-    const { error } = await supabase
-      .from("houses")
-      .delete()
-      .eq("id", id)
-      .select()
-      .single();
+    const { error } = await supabase.from("houses").delete().eq("id", id);
 
     if (error)
-      return NextResponse.json({ message: "Invalid inputs." }, { status: 400 });
-
+      return NextResponse.json(
+        { message: error?.message || "Database operation failed." },
+        { status: 400 },
+      );
     return NextResponse.json(true);
   } catch (err) {
     return NextResponse.json(

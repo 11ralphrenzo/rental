@@ -9,14 +9,13 @@ export async function GET() {
     .order("name", { ascending: true });
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+  return NextResponse.json(data.map(formatHouseResponse));
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { id, name, monthly }: House = await req.json();
 
-    // Fetch admin by email
     const { data, error } = await supabase
       .from("houses")
       .insert({ id, name, monthly })
@@ -24,14 +23,13 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error || !data) {
-      return NextResponse.json({ message: "Invalid inputs." }, { status: 400 });
+      return NextResponse.json(
+        { message: error?.message || "Database operation failed." },
+        { status: 400 },
+      );
     }
 
-    return NextResponse.json({
-      id: data.id,
-      name: data.username,
-      monthly: data.monthly,
-    });
+    return NextResponse.json(formatHouseResponse(data));
   } catch (err) {
     return NextResponse.json(
       { message: "Something went wrong." + err },
@@ -44,7 +42,6 @@ export async function PUT(req: NextRequest) {
   try {
     const { id, name, monthly }: House = await req.json();
 
-    // Fetch admin by email
     const { data, error } = await supabase
       .from("houses")
       .update({ name, monthly })
@@ -53,14 +50,13 @@ export async function PUT(req: NextRequest) {
       .single();
 
     if (error || !data) {
-      return NextResponse.json({ message: "Invalid inputs." }, { status: 400 });
+      return NextResponse.json(
+        { message: error?.message || "Database operation failed." },
+        { status: 400 },
+      );
     }
 
-    return NextResponse.json({
-      id: data.id,
-      name: data.username,
-      monthly: data.monthly,
-    });
+    return NextResponse.json(formatHouseResponse(data));
   } catch (err) {
     return NextResponse.json(
       { message: "Something went wrong." + err },
@@ -68,3 +64,9 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
+
+const formatHouseResponse = (house: House) => ({
+  id: house.id,
+  name: house.name,
+  monthly: house.monthly,
+});

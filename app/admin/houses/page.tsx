@@ -14,11 +14,11 @@ import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { handleAxiosError } from "@/lib/utils";
 import { House } from "@/models/house";
-import { AxiosError } from "axios";
 import { CirclePlus, Pencil, Save, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import useHouseModal from "./hooks/useHouseModal";
 
 function Page() {
   const {
@@ -28,16 +28,31 @@ function Page() {
     reset,
   } = useForm<House>();
   const [houses, setHouses] = useState<House[] | undefined>(undefined);
-  const [selectedHouse, setSelectedHouse] = useState<House | null>(null);
-  const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [toDelete, setToDelete] = useState<House | null>(null);
+
+  const {
+    selectedHouse,
+    setSelectedHouse,
+    isAdding,
+    setIsAdding,
+    openAdd,
+    openEdit,
+    close,
+  } = useHouseModal();
+
   useEffect(() => {
     if (selectedHouse || isAdding) return;
     const getData = async () => {
+      setIsLoading(true);
       try {
         const response = await GetAllHouses();
         if (response) setHouses(response.data);
-      } catch (error) {}
+      } catch (error) {
+        handleAxiosError(error, "Failed to load houses.");
+      } finally {
+        setIsLoading(false);
+      }
     };
     getData();
   }, [selectedHouse, isAdding, toDelete]);
@@ -66,7 +81,6 @@ function Page() {
         setSelectedHouse(null);
       }
     } catch (err) {
-      reset();
       toast.dismiss();
       handleAxiosError(
         err,
@@ -75,7 +89,7 @@ function Page() {
     }
   };
 
-  const onDelete = async (data: House) => {
+  const onDelete = useCallback(async (data: House) => {
     setToDelete(data);
     toast.loading(`Deleting house details...`);
     try {
@@ -87,11 +101,10 @@ function Page() {
         setSelectedHouse(null);
       }
     } catch (err) {
-      reset();
       toast.dismiss();
       handleAxiosError(err, `Failed to delete house details.`);
     }
-  };
+  }, []);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -101,19 +114,23 @@ function Page() {
           className="cursor-pointer"
           size="sm"
           variant="default"
-          onClick={() => setIsAdding(true)}
+          onClick={() => openAdd()}
+          disabled={!houses}
         >
           <CirclePlus className="w-4 h-4" />
           Add House
         </Button>
       </div>
-      <LoadingView isLoading={!houses}>
+      <LoadingView
+        isLoading={!houses || isLoading}
+        loadingMessage="Loading Houses..."
+      >
         {houses && (
           <DefTable
             columns={["ID", "Name", "Monthly", ""]}
             data={houses}
             renderRow={(house) => (
-              <TableRow key={house.id} className="cursor-pointer">
+              <TableRow key={house.id}>
                 <TableCell>{house.id}</TableCell>
                 <TableCell>{house.name}</TableCell>
                 <TableCell>{house.monthly}</TableCell>
@@ -122,7 +139,7 @@ function Page() {
                     className="cursor-pointer"
                     variant="outline"
                     size="sm"
-                    onClick={() => setSelectedHouse(house)}
+                    onClick={() => openEdit(house)}
                   >
                     <Pencil />
                   </Button>
@@ -130,7 +147,7 @@ function Page() {
                     className="cursor-pointer"
                     variant="outline"
                     size="sm"
-                    disabled={(toDelete && toDelete.id === house.id) ?? false}
+                    disabled={toDelete?.id === house.id}
                     onClick={() => onDelete(house)}
                   >
                     <Trash2 />
@@ -148,7 +165,7 @@ function Page() {
           isOpen={!!selectedHouse || isAdding}
           onClose={() => {
             setSelectedHouse(null);
-            if (isAdding) setIsAdding(false);
+            if (isAdding) close();
           }}
           title={selectedHouse ? selectedHouse.name : "Add New House"}
           description="Details of the selected House"
@@ -161,6 +178,11 @@ function Page() {
               placeholder="Name"
               {...register("name", { required: "Name is required." })}
             />
+            {errors.name && (
+              <span className="text-sm text-red-500">
+                {errors.name.message}
+              </span>
+            )}
             <Input
               type="number"
               placeholder="Monthly Rent"
@@ -168,6 +190,12 @@ function Page() {
               max={100000}
               {...register("monthly", { required: "Monthly is required." })}
             />
+            {errors.monthly && (
+              <span className="text-sm text-red-500">
+                {errors.monthly.message}
+              </span>
+            )}
+
             <div className="flex space-x-2">
               {!isAdding && selectedHouse && (
                 <Button
