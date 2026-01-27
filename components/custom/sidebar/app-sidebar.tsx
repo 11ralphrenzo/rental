@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Plus } from "lucide-react";
+import { HouseHeart, PlusCircle, ReceiptText, UsersRound } from "lucide-react";
 
-import { Calendars } from "@/components/custom/sidebar/calendars";
 import { DatePicker } from "@/components/custom/sidebar/date-picker";
 import { NavUser } from "@/components/custom/sidebar/nav-user";
 import {
@@ -15,6 +14,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 // This is sample data.
 const data = {
@@ -48,14 +48,40 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <DatePicker />
         <SidebarSeparator className="mx-0" />
-        <Calendars calendars={data.calendars} />
+        {/* <Calendars calendars={data.calendars} /> */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/admin/bills">
+                <ReceiptText />
+                <span>Bills</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/admin/houses">
+                <HouseHeart />
+                <span>Houses</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/admin/renters">
+                <UsersRound />
+                <span>Renters</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <Plus />
-              <span>New Calendar</span>
+              <PlusCircle />
+              <span>New Bill</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
