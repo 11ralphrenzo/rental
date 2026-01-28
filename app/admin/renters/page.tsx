@@ -18,7 +18,7 @@ import {
   GetAllRenters,
   SaveRenter,
   UpdateRenter,
-} from "@/app/services/renter-service";
+} from "@/services/renter-service";
 import crypto from "crypto";
 import { DefDatePicker } from "@/components/reusable/def-date-picker";
 import { DefSelect } from "@/components/reusable/def-select";

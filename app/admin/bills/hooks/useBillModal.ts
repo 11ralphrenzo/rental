@@ -1,4 +1,4 @@
-import { GetAllRenters } from "@/app/services/renter-service";
+import { GetAllRenters } from "@/services/renter-service";
 import { handleAxiosError } from "@/lib/utils";
 import { Bill } from "@/models/bill";
 import { Renter } from "@/models/renter";

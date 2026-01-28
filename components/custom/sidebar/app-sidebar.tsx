@@ -1,12 +1,11 @@
 import * as React from "react";
-import { HouseHeart, PlusCircle, ReceiptText, UsersRound } from "lucide-react";
+import { HouseHeart, ReceiptText, UsersRound } from "lucide-react";
 
 import { DatePicker } from "@/components/custom/sidebar/date-picker";
 import { NavUser } from "@/components/custom/sidebar/nav-user";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -76,16 +75,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton>
-              <PlusCircle />
-              <span>New Bill</span>
-            </SidebarMenuButton>
+            <Link href={"/admin/bills?new=true"}>
+              <SidebarMenuButton>
+                <PlusCircle />
+                <span>New Bill</span>
+              </SidebarMenuButton>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );

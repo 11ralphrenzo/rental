@@ -10,3 +10,9 @@ export type AuthResponse = {
   type?: number;
   message: string;
 };
+
+export type AuthUser = {
+  id: number;
+  name: string;
+  accessToken: string;
+};

@@ -5,9 +5,8 @@ import { AuthRequest } from "@/models/auth";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { saveAdmin } from "@/app/services/local-storage";
-import { AxiosError } from "axios";
-import { Login } from "@/app/services/auth-service";
+import { saveUser } from "@/services/local-storage";
+import { Login } from "@/services/auth-service";
 import { handleAxiosError } from "@/lib/utils";
 
 function AdminLoginForm() {
@@ -26,7 +25,7 @@ function AdminLoginForm() {
       const result = await Login(data);
       toast.dismiss();
       reset();
-      saveAdmin(result.data);
+      saveUser(result.data);
       toast.success("Logged in successfully!");
       router.replace("/admin/houses");
     } catch (err) {

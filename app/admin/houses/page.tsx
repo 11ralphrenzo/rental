@@ -5,7 +5,7 @@ import {
   GetAllHouses,
   SaveHouse,
   UpdateHouse,
-} from "@/app/services/house-service";
+} from "@/services/house-service";
 import LoadingView from "@/components/custom/loading-view";
 import { DrawerDialog } from "@/components/reusable/def-drawer-dialog";
 import { DefTable } from "@/components/reusable/def-table";

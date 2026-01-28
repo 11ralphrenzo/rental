@@ -13,7 +13,6 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import useBillModal from "./hooks/useBillModal";
 
-import crypto from "crypto";
 import { DefDatePicker } from "@/components/reusable/def-date-picker";
 import { DefSelect } from "@/components/reusable/def-select";
 import {
@@ -21,7 +20,7 @@ import {
   GetAllBills,
   SaveBill,
   UpdateBill,
-} from "@/app/services/bills-service";
+} from "@/services/bills-service";
 import { Bill } from "@/models/bill";
 import { Separator } from "@/components/ui/separator";
 
@@ -65,7 +64,6 @@ function Page() {
   const totalWater = useWatch({ control, name: "total_water" });
   const rent = useWatch({ control, name: "rent" });
   const others = useWatch({ control, name: "others" });
-  const total = useWatch({ control, name: "total" });
 
   useEffect(() => {
     if (selectedBill || isAdding) return;
@@ -268,7 +266,7 @@ function Page() {
             <Controller
               name="renterId"
               control={control}
-              rules={{ required: "House is required." }}
+              rules={{ required: "Renter is required." }}
               render={({ field }) => (
                 <DefSelect
                   value={field.value}

@@ -1,4 +1,4 @@
-import { GetAllHouses } from "@/app/services/house-service";
+import { GetAllHouses } from "@/services/house-service";
 import { handleAxiosError } from "@/lib/utils";
 import { House } from "@/models/house";
 import { Renter } from "@/models/renter";
