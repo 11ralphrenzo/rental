@@ -2,7 +2,7 @@
 
 import RenterBills from "./components/renter-bills";
 import { GetRenterBills } from "@/services/renter/bills-service";
-import { cn, handleAxiosError } from "@/lib/utils";
+import { handleAxiosError } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Bill } from "@/models/bill";
 import UsageChart from "./components/usage-chart";
