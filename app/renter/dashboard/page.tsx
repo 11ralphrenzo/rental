@@ -14,7 +14,7 @@ function Dashboard() {
     const getBills = async () => {
       try {
         const response = await GetRenterBills();
-        if (response.statusText === "OK") {
+        if (response.data) {
           setBills(response.data);
         }
       } catch (error) {
