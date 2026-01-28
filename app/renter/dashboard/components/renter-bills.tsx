@@ -13,16 +13,16 @@ type RenterBillsProps = {
 
 function RenterBills({ className, bills }: RenterBillsProps) {
   return (
-    <Card className={cn("w-sm h-fit sm:w-md sm:min-h-50", className)}>
+    <Card className={cn("w-full", className)}>
       <CardHeader className="space-y-0 gap-0">
-        <span className="text-lg font-semibold">Bills</span>
+        <span className="text-lg font-semibold">🧾 Bills</span>
         <span className="text-sm text-muted-foreground">
           Upcoming & Past Charges
         </span>
       </CardHeader>
       <CardContent>
         <LoadingView isLoading={bills === undefined}>
-          <div className="flex flex-col space-y-2 ">
+          <div className="flex flex-col space-y-2">
             {bills && bills.length > 0 ? (
               bills.map((bill) => <CustomBill key={bill.id} bill={bill} />)
             ) : (
