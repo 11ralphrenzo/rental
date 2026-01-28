@@ -6,7 +6,12 @@ import { DefTable } from "@/components/reusable/def-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { formatDate, handleAxiosError } from "@/lib/utils";
+import {
+  formatCurrency,
+  formatDate,
+  formatToTwoDecimals,
+  handleAxiosError,
+} from "@/lib/utils";
 import { CirclePlus, Pencil, Save, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -93,15 +98,18 @@ function Page() {
   // Calculate totals
   useEffect(() => {
     if (prevElectric && currElectric) {
-      const total =
-        (Number(currElectric) - Number(prevElectric)) * rateElectric;
+      const total = formatToTwoDecimals(
+        (Number(currElectric) - Number(prevElectric)) * rateElectric,
+      );
       setValue("total_electricity", total);
     }
   }, [prevElectric, currElectric, rateElectric, setValue]);
 
   useEffect(() => {
     if (prevWater && currWater) {
-      const total = (Number(currWater) - Number(prevWater)) * rateWater;
+      const total = formatToTwoDecimals(
+        (Number(currWater) - Number(prevWater)) * rateWater,
+      );
       setValue("total_water", total);
     }
   }, [prevWater, currWater, rateWater, setValue]);
@@ -211,17 +219,17 @@ function Page() {
               <TableRow key={bill.id}>
                 <TableCell>{formatDate(bill.month)}</TableCell>
                 <TableCell>{bill.renter?.name}</TableCell>
-                <TableCell>{bill.rent}</TableCell>
-                <TableCell>{bill.rate_electricity}</TableCell>
+                <TableCell>{formatCurrency(bill.rent)}</TableCell>
+                <TableCell>{formatCurrency(bill.rate_electricity)}</TableCell>
                 <TableCell>{bill.prev_electricity}</TableCell>
                 <TableCell>{bill.curr_electricity}</TableCell>
-                <TableCell>{bill.total_electricity}</TableCell>
-                <TableCell>{bill.rate_water}</TableCell>
+                <TableCell>{formatCurrency(bill.total_electricity)}</TableCell>
+                <TableCell>{formatCurrency(bill.rate_water)}</TableCell>
                 <TableCell>{bill.prev_water}</TableCell>
                 <TableCell>{bill.curr_water}</TableCell>
-                <TableCell>{bill.total_water}</TableCell>
-                <TableCell>{bill.others}</TableCell>
-                <TableCell>{bill.total}</TableCell>
+                <TableCell>{formatCurrency(bill.total_water)}</TableCell>
+                <TableCell>{formatCurrency(bill.others)}</TableCell>
+                <TableCell>{formatCurrency(bill.total)}</TableCell>
 
                 <TableCell className="flex space-x-2 w-2">
                   <Button
@@ -294,7 +302,7 @@ function Page() {
 
             <div className="flex space-x-2">
               <Input
-                type="number"
+                min={0}
                 className="flex-1"
                 placeholder="Monthly Rent"
                 {...register("rent", { required: "Rent is required." })}
@@ -328,7 +336,7 @@ function Page() {
             <div className="flex items-center">
               <span className="flex-1 text-sm font-semibold">Electricity</span>
               <Input
-                type="number"
+                min={0}
                 className="w-20"
                 placeholder="Rate"
                 {...register("rate_electricity", {
@@ -338,7 +346,7 @@ function Page() {
             </div>
             <div className="flex space-x-2">
               <Input
-                type="number"
+                min={0}
                 className="flex-1"
                 placeholder="Previous"
                 {...register("prev_electricity", {
@@ -347,7 +355,7 @@ function Page() {
               />
 
               <Input
-                type="number"
+                min={0}
                 className="flex-1"
                 placeholder="Current"
                 {...register("curr_electricity", {
@@ -356,7 +364,7 @@ function Page() {
               />
 
               <Input
-                type="number"
+                min={0}
                 className="flex-1"
                 placeholder="Total"
                 disabled
@@ -369,7 +377,7 @@ function Page() {
             <div className="flex items-center">
               <span className="flex-1 text-sm font-semibold">Water</span>
               <Input
-                type="number"
+                min={0}
                 className="w-20"
                 placeholder="Rate"
                 {...register("rate_water", {
@@ -379,7 +387,7 @@ function Page() {
             </div>
             <div className="flex space-x-2">
               <Input
-                type="number"
+                min={0}
                 className="flex-1"
                 placeholder="Previous"
                 {...register("prev_water", {
@@ -388,7 +396,7 @@ function Page() {
               />
 
               <Input
-                type="number"
+                min={0}
                 className="flex-1"
                 placeholder="Current"
                 {...register("curr_water", {
@@ -397,10 +405,10 @@ function Page() {
               />
 
               <Input
-                type="number"
                 className="flex-1"
                 placeholder="Total"
                 disabled
+                min={0}
                 value={totalWater}
                 {...register("total_water")}
               />
@@ -409,8 +417,8 @@ function Page() {
             <Separator />
             <div className="flex">
               <Input
-                type="number"
                 className="w-50"
+                min={0}
                 placeholder="Other Charges"
                 {...register("others", { valueAsNumber: true })}
               />
@@ -419,8 +427,10 @@ function Page() {
             <Separator />
 
             <div className="flex justify-between pb-2 px-2 bg-slate-100 rounded p-2">
-              <span className="text-sm font-semibold">Total Bill:</span>
-              <span className="text-sm font-semibold">{grandTotal}</span>
+              <span className="text-sm font-medium">Total Bill:</span>
+              <span className="text-sm font-semibold">
+                {formatCurrency(grandTotal)}
+              </span>
             </div>
 
             {/* 

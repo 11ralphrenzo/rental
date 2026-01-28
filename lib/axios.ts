@@ -1,4 +1,5 @@
 // lib/axios.ts
+import { clearToken, clearUser, getToken } from "@/services/local-storage";
 import axios, { AxiosInstance } from "axios";
 
 // Create an instance
@@ -14,7 +15,7 @@ const api: AxiosInstance = axios.create({
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("admin_token"); // or Zustand
+      const token = getToken();
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -30,7 +31,13 @@ api.interceptors.response.use(
   (error) => {
     // Handle global errors, e.g., logout on 401
     if (error.response?.status === 401) {
-      if (typeof window !== "undefined") localStorage.removeItem("admin_token");
+      if (typeof window !== "undefined") {
+        // Clear token and user info from localStorage
+        clearToken();
+        clearUser();
+        // Optionally, you could dispatch a logout action if using context/state management
+        window.location.href = "/renter"; // Redirect to login page
+      }
       // You could also redirect to login
     }
     return Promise.reject(error);

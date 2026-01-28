@@ -6,7 +6,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from("bills")
     .select("*, renters(id, name)")
-    .order("month", { ascending: true });
+    .order("month", { ascending: false });
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data.map(formatResponse));
@@ -129,7 +129,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-const formatResponse = (bill: Bill) => ({
+export const formatResponse = (bill: Bill) => ({
   id: bill.id,
   renterId: bill.renterId,
   renter: bill.renters,

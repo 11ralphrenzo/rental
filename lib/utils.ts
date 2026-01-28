@@ -63,3 +63,23 @@ export const formatDateTime = (
   const dateObj = typeof date === "string" ? new Date(date) : date;
   return format(dateObj, "MMM dd, yyyy HH:mm");
 };
+
+// Currency formatting utility
+// ...existing code...
+
+export function formatCurrency(
+  amount: number,
+  currency: string = "PHP",
+): string {
+  return new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+// Fortmat 2 Decimals
+export function formatToTwoDecimals(value: number) {
+  return Math.round(value * 100) / 100;
+}

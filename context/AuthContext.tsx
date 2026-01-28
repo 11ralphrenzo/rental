@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, use } from "react";
 import {
   clearToken,
   clearUser,
@@ -28,20 +28,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Initialize from localStorage on mount
   useEffect(() => {
     const token = getToken();
-    const user = getUser<AuthUser>();
+    const storedUser = getUser<AuthUser>();
 
-    if (token && user) {
-      saveToken(token);
-      saveUser(user);
+    if (token && storedUser) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      setAccessToken(token);
+      setUser(storedUser);
     }
     // setIsLoading(false);
   }, []);
 
-  const login = (token: string, user: AuthUser) => {
+  const login = (token: string, newUser: AuthUser) => {
     setAccessToken(token);
-    setUser(user);
+    setUser(newUser);
     saveToken(token);
-    saveUser(user);
+    saveUser(newUser);
   };
 
   const logout = () => {

@@ -6,15 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Renter } from "@/models/renter";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { GetHousesResource } from "../../services/renter/resource/renter-house-service";
 import { handleAxiosError } from "@/lib/utils";
 import { House } from "@/models/house";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Login } from "../../services/renter/auth-service";
 import { useRouter } from "next/navigation";
-import { saveToken, saveUser } from "../../services/local-storage";
 import { useAuth } from "../../context/AuthContext";
+import { GetHousesResource } from "@/services/renter/renter-house-service";
 
 function Page() {
   const router = useRouter();
