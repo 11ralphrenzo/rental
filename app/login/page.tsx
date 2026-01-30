@@ -40,6 +40,7 @@ function Page() {
   const onSubmit = async (data: Renter) => {
     toast.loading("Logging in...");
     try {
+      data.pin_hash = data.pin_hash.toUpperCase();
       const response = await Login(data);
       toast.dismiss();
       if (response.data?.accessToken) {
