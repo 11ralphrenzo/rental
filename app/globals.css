@@ -123,3 +123,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .renter-pin {
+    @apply flex justify-center;
+  }
+
+  .renter-pin-group {
+    @apply flex gap-2;
+  }
+
+  .renter-pin-slot {
+    @apply min-h-12 min-w-12 rounded-md border border-border  font-bold;
+  }
+}

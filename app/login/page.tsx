@@ -1,46 +1,41 @@
 "use client";
 
-import { DefSelect } from "@/components/reusable/def-select";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Renter } from "@/models/renter";
-import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { handleAxiosError } from "@/lib/utils";
-import { House } from "@/models/house";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Login } from "../../services/renter/auth-service";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
-import { GetHousesResource } from "@/services/renter/renter-house-service";
+import RenterPin from "@/components/custom/renter-pin";
+import { ArrowRight } from "lucide-react";
 
 function Page() {
   const router = useRouter();
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset,
     control,
+    reset,
   } = useForm<Renter>();
-  const [houses, setHouses] = useState<House[] | undefined>(undefined);
   const { login } = useAuth();
 
-  useEffect(() => {
-    const getResources = async () => {
-      try {
-        const response = await GetHousesResource();
-        if (response) {
-          setHouses(response.data);
-        }
-      } catch (error) {
-        handleAxiosError(error, "Failed to load resources.");
-      }
-    };
+  // useEffect(() => {
+  //   const getResources = async () => {
+  //     try {
+  //       const response = await GetHousesResource();
+  //       if (response) {
+  //         setHouses(response.data);
+  //       }
+  //     } catch (error) {
+  //       handleAxiosError(error, "Failed to load resources.");
+  //     }
+  //   };
 
-    getResources();
-  }, []);
+  //   getResources();
+  // }, []);
 
   const onSubmit = async (data: Renter) => {
     toast.loading("Logging in...");
@@ -55,6 +50,9 @@ function Page() {
     } catch (err) {
       toast.dismiss();
       handleAxiosError(err, "Login failed. Please check your House and Pin.");
+      reset({
+        pin_hash: "",
+      });
     }
   };
 
@@ -66,10 +64,35 @@ function Page() {
         </CardHeader>
         <CardContent>
           <form
-            className="flex flex-col space-y-4"
+            className="flex flex-col space-y-2 items-center justify-center"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Controller
+            <div className="flex space-x-2 items-center justify-center">
+              <Controller
+                name="pin_hash"
+                control={control}
+                rules={{ required: "PIN is required." }}
+                render={({ field }) => (
+                  <RenterPin value={field.value} onChange={field.onChange} />
+                )}
+              />
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="h-10 w-10 rounded-full"
+              >
+                <ArrowRight />
+              </Button>
+            </div>
+
+            {errors.pin_hash && (
+              <span className="flex-1 text-sm text-red-500">
+                {errors.pin_hash.message}
+              </span>
+            )}
+
+            {/* <Controller
               name="houseId"
               control={control}
               rules={{ required: "House is required." }}
@@ -89,26 +112,18 @@ function Page() {
               <span className="text-sm text-red-500">
                 {errors.houseId.message}
               </span>
-            )}
+            )} */}
 
-            <Input
+            {/* <Input
               placeholder="Pin"
-              // value={
-              //   isAdding
-              //     ? crypto.randomBytes(2).toString("hex").toUpperCase()
-              //     : undefined
-              // }
+    
               {...register("pin_hash", { required: "Pin is required." })}
             />
             {errors.pin_hash && (
               <span className="text-sm text-red-500">
                 {errors.pin_hash.message}
               </span>
-            )}
-
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              Login
-            </Button>
+            )} */}
           </form>
         </CardContent>
       </Card>
