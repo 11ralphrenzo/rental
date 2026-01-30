@@ -3,12 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
-  const { houseId, pin_hash } = await request.json();
+  const { pin_hash } = await request.json();
 
   const { data, error } = await supabase
     .from("renters")
     .select("*")
-    .eq("houseId", houseId)
     .eq("pin_hash", pin_hash)
     .single();
 
