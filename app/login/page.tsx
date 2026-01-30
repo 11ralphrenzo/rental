@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import RenterPin from "@/components/custom/renter-pin";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 function Page() {
   const router = useRouter();
@@ -60,10 +61,11 @@ function Page() {
   return (
     <div className="flex w-dvw h-dvh items-center justify-center">
       <Card className="w-md">
-        <CardHeader>
+        {/* <CardHeader>
           <span className="text-lg font-semibold">Login</span>
-        </CardHeader>
-        <CardContent>
+        </CardHeader> */}
+        <CardContent className="flex flex-col items-center space-y-0">
+          <Image src="/logo.png" alt="App Logo" width={200} height={200} />
           <form
             className="flex flex-col space-y-2 items-center justify-center"
             onSubmit={handleSubmit(onSubmit)}
