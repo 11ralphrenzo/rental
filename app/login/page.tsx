@@ -69,7 +69,7 @@ function Page() {
           height={150}
         />
         <form
-          className="w-md flex flex-col items-center justify-center space-y-2"
+          className="w-md flex flex-col items-center justify-center space-y-4 sm:space-y-2"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-2 items-center justify-center">
@@ -87,6 +87,7 @@ function Page() {
               disabled={isSubmitting}
               className="h-10 w-full sm:w-10 rounded-full cursor-pointer"
             >
+              <span className="block sm:hidden">Login</span>
               <ArrowRight />
             </Button>
           </div>
