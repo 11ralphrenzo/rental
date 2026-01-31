@@ -57,7 +57,7 @@ function Page() {
     <div className="flex w-dvw h-dvh items-center justify-center ">
       <div className="flex flex-col justify-center items-center space-y-20 sm:space-y-10">
         <Image
-          className="h-fit w-60 sm:w-40"
+          className="w-60 sm:w-40"
           src="/logo.png"
           alt="App Logo"
           width={200}

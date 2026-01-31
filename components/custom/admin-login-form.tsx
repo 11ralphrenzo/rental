@@ -26,7 +26,6 @@ function AdminLoginForm() {
       const result = await Login(data);
       toast.dismiss();
       reset();
-      console.log(result.data);
       login(result.data.accessToken, result.data);
       toast.success("Logged in successfully!");
       router.replace("/admin/houses");

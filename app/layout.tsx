@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { AlertDialogProvider } from "@/context/AlertDialogContext";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AlertDialogProvider>
-          <AuthProvider>
-            {children}
-            <Toaster position="top-right" richColors />
-          </AuthProvider>
-        </AlertDialogProvider>
+        <Suspense fallback="Loading...">
+          <AlertDialogProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position="top-right" richColors />
+            </AuthProvider>
+          </AlertDialogProvider>
+        </Suspense>
       </body>
     </html>
   );
