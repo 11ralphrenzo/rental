@@ -59,15 +59,18 @@ function Page() {
   };
 
   return (
-    <div className="flex w-dvw h-dvh items-center justify-center">
-      <Card className="w-md">
-        {/* <CardHeader>
-          <span className="text-lg font-semibold">Login</span>
-        </CardHeader> */}
-        <CardContent className="flex flex-col items-center space-y-0">
-          <Image src="/logo.png" alt="App Logo" width={200} height={200} />
+    <div className="flex w-dvw h-dvh items-center justify-center ">
+      <div className="flex flex-col justify-center items-center space-y-10">
+        <Image
+          className="h-fit"
+          src="/logo.png"
+          alt="App Logo"
+          width={200}
+          height={150}
+        />
+        <div className="w-md flex flex-col items-center space-y-2">
           <form
-            className="flex flex-col space-y-2 items-center justify-center"
+            className="flex flex-col items-center justify-center"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex space-x-2 items-center justify-center">
@@ -83,7 +86,7 @@ function Page() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-10 w-10 rounded-full"
+                className="h-10 w-10 rounded-full cursor-pointer"
               >
                 <ArrowRight />
               </Button>
@@ -128,8 +131,8 @@ function Page() {
               </span>
             )} */}
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
