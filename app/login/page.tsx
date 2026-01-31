@@ -60,45 +60,46 @@ function Page() {
 
   return (
     <div className="flex w-dvw h-dvh items-center justify-center ">
-      <div className="flex flex-col justify-center items-center space-y-10">
+      <div className="flex flex-col justify-center items-center space-y-20 sm:space-y-10">
         <Image
-          className="h-fit"
+          className="h-fit w-60 sm:w-40"
           src="/logo.png"
           alt="App Logo"
           width={200}
           height={150}
         />
-        <div className="w-md flex flex-col items-center space-y-2">
-          <form
-            className="flex flex-col items-center justify-center"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="flex space-x-2 items-center justify-center">
-              <Controller
-                name="pin_hash"
-                control={control}
-                rules={{ required: "PIN is required." }}
-                render={({ field }) => (
-                  <RenterPin value={field.value} onChange={field.onChange} />
-                )}
-              />
+        <form
+          className="w-md flex flex-col items-center justify-center space-y-2"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-2 items-center justify-center">
+            <Controller
+              name="pin_hash"
+              control={control}
+              rules={{ required: "PIN is required." }}
+              render={({ field }) => (
+                <RenterPin value={field.value} onChange={field.onChange} />
+              )}
+            />
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="h-10 w-10 rounded-full cursor-pointer"
-              >
-                <ArrowRight />
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="h-10 w-full sm:w-10 rounded-full cursor-pointer"
+            >
+              <ArrowRight />
+            </Button>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            Enter 4 digit code or pin.
+          </span>
+          {errors.pin_hash && (
+            <span className="flex-1 text-sm text-red-500">
+              {errors.pin_hash.message}
+            </span>
+          )}
 
-            {errors.pin_hash && (
-              <span className="flex-1 text-sm text-red-500">
-                {errors.pin_hash.message}
-              </span>
-            )}
-
-            {/* <Controller
+          {/* <Controller
               name="houseId"
               control={control}
               rules={{ required: "House is required." }}
@@ -120,7 +121,7 @@ function Page() {
               </span>
             )} */}
 
-            {/* <Input
+          {/* <Input
               placeholder="Pin"
     
               {...register("pin_hash", { required: "Pin is required." })}
@@ -130,8 +131,7 @@ function Page() {
                 {errors.pin_hash.message}
               </span>
             )} */}
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   );
