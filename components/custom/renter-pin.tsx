@@ -4,14 +4,16 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 interface RenterPinProps {
   value: string;
   onChange: (value: string) => void;
+  onComplete?: (value: string) => void;
 }
-function RenterPin({ value, onChange }: RenterPinProps) {
+function RenterPin({ value, onChange, onComplete }: RenterPinProps) {
   return (
     <InputOTP
       maxLength={4}
       className="renter-pin"
       value={value}
       onChange={onChange}
+      onComplete={onComplete}
     >
       <InputOTPGroup className="renter-pin-group ">
         <InputOTPSlot

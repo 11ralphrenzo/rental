@@ -17,6 +17,7 @@ function Page() {
   const router = useRouter();
   const {
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
     control,
     reset,
@@ -47,9 +48,6 @@ function Page() {
     } catch (err) {
       toast.dismiss();
       handleAxiosError(err, "Login failed. Please check your House and Pin.");
-      reset({
-        pin_hash: "",
-      });
     }
   };
 
@@ -57,14 +55,14 @@ function Page() {
     <div className="flex w-dvw h-dvh items-center justify-center ">
       <div className="flex flex-col justify-center items-center space-y-20 sm:space-y-10">
         <Image
-          className="w-60 sm:w-40"
+          className="w-50 sm:w-40"
           src="/logo.png"
           alt="App Logo"
           width={200}
           height={150}
         />
         <form
-          className="w-md flex flex-col items-center justify-center space-y-4 "
+          className="w-md flex flex-col items-center justify-center space-y-4"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-2 sm:space-y-0 items-center justify-center">
@@ -73,7 +71,11 @@ function Page() {
               control={control}
               rules={{ required: "PIN is required." }}
               render={({ field }) => (
-                <RenterPin value={field.value} onChange={field.onChange} />
+                <RenterPin
+                  value={field.value}
+                  onChange={field.onChange}
+                  onComplete={() => onSubmit(getValues())}
+                />
               )}
             />
 

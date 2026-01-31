@@ -233,11 +233,6 @@ function Page() {
 
             <Input
               placeholder="Pin"
-              value={
-                isAdding
-                  ? crypto.randomBytes(2).toString("hex").toUpperCase()
-                  : undefined
-              }
               {...register("pin_hash", { required: "Monthly is required." })}
             />
             {errors.pin_hash && (
