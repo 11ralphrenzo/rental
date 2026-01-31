@@ -13,22 +13,22 @@ function RenterPin({ value, onChange }: RenterPinProps) {
       value={value}
       onChange={onChange}
     >
-      <InputOTPGroup className="renter-pin-group">
+      <InputOTPGroup className="renter-pin-group ">
         <InputOTPSlot
           index={0}
-          className="renter-pin-slot w-15 h-15 sm:w-9 sm:h-9"
+          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
         />
         <InputOTPSlot
           index={1}
-          className="renter-pin-slot w-15 h-15 sm:w-9 sm:h-9"
+          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
         />
         <InputOTPSlot
           index={2}
-          className="renter-pin-slot w-15 h-15 sm:w-9 sm:h-9"
+          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
         />
         <InputOTPSlot
           index={3}
-          className="renter-pin-slot w-15 h-15 sm:w-9 sm:h-9"
+          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
         />
       </InputOTPGroup>
     </InputOTP>

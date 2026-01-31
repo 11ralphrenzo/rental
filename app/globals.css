@@ -130,10 +130,10 @@
   }
 
   .renter-pin-group {
-    @apply flex gap-2;
+    @apply flex gap-2 items-center justify-center;
   }
 
   .renter-pin-slot {
-    @apply min-h-12 min-w-12 rounded-md border border-border  font-bold;
+    @apply rounded-md border border-border font-bold;
   }
 }

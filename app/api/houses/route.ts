@@ -1,8 +1,15 @@
 import { supabase } from "@/lib/supabaseClient";
 import { House } from "@/models/house";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "../middleware/auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const tokenData = verifyToken(request);
+
+  if (!tokenData) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const { data, error } = await supabase
     .from("houses")
     .select("*")

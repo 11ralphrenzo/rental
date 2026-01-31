@@ -5,11 +5,12 @@ import { AuthRequest } from "@/models/auth";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { saveUser } from "@/services/local-storage";
 import { Login } from "@/services/auth-service";
 import { handleAxiosError } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 function AdminLoginForm() {
+  const { login } = useAuth();
   const router = useRouter();
   const {
     register,
@@ -25,7 +26,8 @@ function AdminLoginForm() {
       const result = await Login(data);
       toast.dismiss();
       reset();
-      saveUser(result.data);
+      console.log(result.data);
+      login(result.data.accessToken, result.data);
       toast.success("Logged in successfully!");
       router.replace("/admin/houses");
     } catch (err) {

@@ -26,7 +26,7 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 p-1 w-full overflow-hidden">
+    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2  w-full overflow-hidden">
       <RenterBills bills={bills} className="sm:col-span-2 row-span-2" />
       <UsageChart type="electricity" bills={bills} className="sm:col-span-3" />
       <UsageChart type="water" bills={bills} className="sm:col-span-3" />

@@ -13,6 +13,8 @@ export type AuthResponse = {
 
 export type AuthUser = {
   id: number;
+  userName?: string;
   name: string;
+  type?: string | undefined;
   accessToken: string;
 };

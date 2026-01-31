@@ -35,8 +35,9 @@ api.interceptors.response.use(
         // Clear token and user info from localStorage
         clearToken();
         clearUser();
+
         // Optionally, you could dispatch a logout action if using context/state management
-        window.location.href = "/renter"; // Redirect to login page
+        window.location.href = "/"; // Redirect to login page
       }
       // You could also redirect to login
     }

@@ -17,9 +17,17 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import React from "react";
+import { useAuth } from "@/context/AuthContext";
+import NoAccess from "@/components/custom/no-access";
+import { cn } from "@/lib/utils";
 
 function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  if (user && !user?.type) {
+    return <NoAccess />;
+  }
 
   const segments = pathname.split("/").filter(Boolean);
   const breadcrumbItems = segments.map((segment, index) => {
@@ -31,7 +39,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
   });
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className={cn(!user?.type && "hidden")}>
       <AppSidebar />
       <SidebarInset>
         <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">

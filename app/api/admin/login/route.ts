@@ -3,43 +3,55 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 import bcrypt from "bcryptjs";
 import { AuthRequest } from "@/models/auth";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: NextRequest) {
   try {
     const { username, password }: AuthRequest = await req.json();
 
     // Fetch admin by email
-    const { data: admin, error } = await supabase
+    const { data: data, error } = await supabase
       .from("admins")
       .select("*")
       .eq("username", username)
       .single();
 
-    if (error || !admin) {
+    if (error || !data) {
       return NextResponse.json(
-        { message: "Invalid username or password" },
+        { message: "Invalid username or password." },
         { status: 401 },
       );
     }
 
     // Compare password
-    const valid = await bcrypt.compare(password, admin.passwordHash);
+    const valid = await bcrypt.compare(password, data.passwordHash);
     if (!valid) {
       return NextResponse.json(
-        { message: "Invalid username or password" },
+        { message: "Invalid username or password." },
         { status: 401 },
       );
     }
 
+    const accessToken = await jwt.sign(
+      {
+        id: data.id,
+        name: data.userName,
+        type: data.type,
+      },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "365d" },
+    );
+
     // Success: return admin info
     return NextResponse.json({
-      id: admin.id,
-      username: admin.username,
-      type: admin.type,
+      id: data.id,
+      name: data.username,
+      type: data.type,
+      accessToken,
     });
   } catch (err) {
     return NextResponse.json(
-      { message: "Something went wrong" + err },
+      { message: "Something went wrong." + err },
       { status: 500 },
     );
   }

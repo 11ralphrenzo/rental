@@ -1,17 +1,17 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Renter } from "@/models/renter";
 import { Controller, useForm } from "react-hook-form";
 import { handleAxiosError } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Login } from "../../services/renter/auth-service";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import RenterPin from "@/components/custom/renter-pin";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useEffect } from "react";
 
 function Page() {
   const router = useRouter();
@@ -22,21 +22,16 @@ function Page() {
     reset,
   } = useForm<Renter>();
   const { login } = useAuth();
+  const searchParams = useSearchParams();
+  const pinParams = searchParams.get("pin");
 
-  // useEffect(() => {
-  //   const getResources = async () => {
-  //     try {
-  //       const response = await GetHousesResource();
-  //       if (response) {
-  //         setHouses(response.data);
-  //       }
-  //     } catch (error) {
-  //       handleAxiosError(error, "Failed to load resources.");
-  //     }
-  //   };
-
-  //   getResources();
-  // }, []);
+  useEffect(() => {
+    if (pinParams) {
+      reset({
+        pin_hash: pinParams,
+      });
+    }
+  }, [reset, pinParams]);
 
   const onSubmit = async (data: Renter) => {
     toast.loading("Logging in...");
@@ -69,10 +64,10 @@ function Page() {
           height={150}
         />
         <form
-          className="w-md flex flex-col items-center justify-center space-y-4 sm:space-y-2"
+          className="w-md flex flex-col items-center justify-center space-y-4 "
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-2 items-center justify-center">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-2 sm:space-y-0 items-center justify-center">
             <Controller
               name="pin_hash"
               control={control}

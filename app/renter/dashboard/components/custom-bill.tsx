@@ -25,7 +25,7 @@ function CustomBill({ bill }: CustomBillProps) {
     >
       <div className="flex items-center">
         <div className="flex-1 flex flex-col space-y-0">
-          <span className="ftext-sm font-semibold">
+          <span className="text-sm font-semibold">
             {formatDate(bill.month, "MMM").toUpperCase()}
           </span>
           <span className="text-xs font-light">
@@ -44,8 +44,10 @@ function CustomBill({ bill }: CustomBillProps) {
       </div>
       <CollapsibleContent className="grid grid-cols-4 pt-2 gap-2">
         <Separator className="col-span-full" />
-        <div className="col-span-2 grid text-xs grid-cols-2 px-2 py-2 border border-border/80 rounded-sm gap-1">
-          <span className="font-semibold col-span-2">Electricity</span>
+        <div className="col-span-4 sm:col-span-2 grid text-xs grid-cols-2 px-2 py-2 border border-border/80 rounded-sm gap-1">
+          <span className="font-semibold col-span-2 text-center sm:text-left">
+            Electricity
+          </span>
           <span className="">Current:</span>
           <span className="text-end">{bill.curr_electricity}</span>
           <span className="">Previous:</span>
@@ -65,8 +67,10 @@ function CustomBill({ bill }: CustomBillProps) {
             {formatCurrency(bill.total_electricity)}
           </span>
         </div>
-        <div className="col-span-2 grid text-xs grid-cols-2 px-2 py-2 border border-border/80 rounded-sm gap-1">
-          <span className="font-semibold col-span-2">Water</span>
+        <div className="col-span-4 sm:col-span-2 grid text-xs grid-cols-2 px-2 py-2 border border-border/80 rounded-sm gap-1">
+          <span className="font-semibold col-span-2 text-center sm:text-left">
+            Water
+          </span>
           <span className="">Current:</span>
           <span className="text-end">{bill.curr_water}</span>
           <span className="">Previous:</span>
@@ -85,7 +89,9 @@ function CustomBill({ bill }: CustomBillProps) {
           </span>
         </div>
         <div className="col-span-full grid text-xs grid-cols-2 px-2 py-2 border border-border/80 rounded-sm gap-1">
-          <span className="font-semibold col-span-2">Summary</span>
+          <span className="font-semibold col-span-2 text-center sm:text-left">
+            Summary
+          </span>
           <span className="">Rent:</span>
           <span className="text-end">{formatCurrency(bill.rent)}</span>
           <span className="">Electricity:</span>

@@ -28,7 +28,7 @@ type NavUserProps = {
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
   const { show } = useAlertDialog();
-  const { logout } = useAuth();
+  const { user: loggedUser, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -39,7 +39,7 @@ export function NavUser({ user }: NavUserProps) {
       variant: "destructive",
       onConfirm: () => {
         logout();
-        router.push("/login");
+        router.push(loggedUser?.type ? "/" : "/login");
         toast.success("Logged out successfully!");
       },
     });
