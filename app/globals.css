@@ -131,11 +131,11 @@
   }
 
   .renter-pin-group {
-    @apply flex gap-2 items-center justify-center;
+    @apply flex gap-2 sm:gap-3 items-center justify-center;
   }
 
   .renter-pin-slot {
-    @apply rounded-md border border-border font-bold;
+    @apply rounded-xl border border-border/80 bg-background font-semibold text-base shadow-sm transition-colors focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50;
   }
 }
 

@@ -58,66 +58,71 @@ function Page() {
   };
 
   return (
-    <div className="relative flex w-dvw h-dvh items-center justify-center overflow-hidden">
-      {/* Decorative blurred background elements for modern glassmorphism feel */}
-      <div className="absolute top-1/4 -left-4 w-72 h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-1/3 right-10 w-72 h-72 bg-rose-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <div className="relative flex min-h-dvh w-full items-center justify-center bg-gradient-to-b from-background via-background to-muted/30 px-4 py-12">
+      {/* Subtle accent glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
+      </div>
 
-      <div className="relative z-10 w-full max-w-sm sm:max-w-md mx-4 flex flex-col items-center justify-center">
-        <div className="space-y-4 text-center pb-8 pt-6">
-          <div className="flex justify-center">
-            <Image
-              src="/logo.png"
-              alt="App Logo"
-              width={160}
-              height={120}
-              priority
-              className="object-contain"
-            />
-          </div>
-          <p className="text-muted-foreground font-medium text-base">
-            Please enter your 4-digit PIN to access your tenant portal.
-          </p>
-        </div>
-
-        <div className="w-full">
-          <form
-            className="flex flex-col items-center justify-center space-y-6"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 items-center justify-center w-full">
-              <Controller
-                name="pin_hash"
-                control={control}
-                rules={{ required: "PIN is required." }}
-                render={({ field }) => (
-                  <RenterPin
-                    value={field.value}
-                    onChange={field.onChange}
-                    onComplete={() => onSubmit(getValues())}
-                  />
-                )}
+      <div className="relative z-10 w-full max-w-sm">
+        <div className="rounded-2xl border border-border/50 bg-card/50 px-6 py-10 shadow-sm ring-1 ring-border/20 backdrop-blur-sm sm:px-10 sm:py-12">
+          <div className="flex flex-col items-center space-y-8">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <Image
+                src="/logo.png"
+                alt="App Logo"
+                width={140}
+                height={105}
+                priority
+                className="object-contain"
               />
-
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="h-12 w-full sm:w-12 sm:rounded-full rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all active:scale-[0.98] flex items-center justify-center"
-              >
-                <span className="block sm:hidden font-semibold">Login</span>
-                <ArrowRight className="hidden sm:block" />
-              </Button>
+              <div>
+                <h1 className="text-lg font-semibold tracking-tight text-foreground">
+                  Tenant Portal
+                </h1>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  Enter your 4-digit PIN to continue
+                </p>
+              </div>
             </div>
 
-            <div className="text-center h-6">
+            <form
+              className="flex w-full flex-col items-center space-y-6"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <div className="flex w-full flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                <Controller
+                  name="pin_hash"
+                  control={control}
+                  rules={{ required: "PIN is required." }}
+                  render={({ field }) => (
+                    <RenterPin
+                      value={field.value}
+                      onChange={field.onChange}
+                      onComplete={() => onSubmit(getValues())}
+                    />
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  size="lg"
+                  className="h-12 w-full shrink-0 sm:w-12 sm:rounded-xl"
+                >
+                  <span className="block sm:hidden">Login</span>
+                  <ArrowRight className="hidden h-5 w-5 sm:block" />
+                </Button>
+              </div>
+
               {errors.pin_hash && (
-                <p className="text-sm text-destructive font-medium animate-in slide-in-from-top-1">
+                <p className="text-center text-sm text-destructive">
                   {errors.pin_hash.message}
                 </p>
               )}
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
