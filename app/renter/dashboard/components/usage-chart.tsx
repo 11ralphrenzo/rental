@@ -5,14 +5,14 @@ import {
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { Bill } from "@/models/bill";
 import { formatToTwoDecimals } from "@/lib/utils";
 import LoadingView from "@/components/custom/loading-view";
+import NoData from "@/components/custom/no-data";
+import { Zap, Droplets } from "lucide-react";
 
 type UsageChartProps = {
   className?: string;
@@ -40,6 +40,9 @@ function UsageChart({
       //   water: formatToTwoDecimals(bill.curr_water - bill.prev_water),
     })) || [];
 
+  const isEmpty = chartData.length === 0;
+  const unit = type === "electricity" ? "kWh" : "m³";
+
   return (
     <section className={className}>
       <div className="flex flex-col space-y-1 mb-6 px-1">
@@ -47,11 +50,18 @@ function UsageChart({
           {type === "electricity" ? "⚡ Electricity" : "💧 Water"} Usage
         </h2>
         <p className="text-sm text-muted-foreground">
-          Historical consumption tracked in {type === "electricity" ? "kWh" : "m³"}.
+          Historical consumption tracked in {unit}.
         </p>
       </div>
 
       <LoadingView isLoading={bills === undefined}>
+        {isEmpty ? (
+          <NoData
+            icon={type === "electricity" ? Zap : Droplets}
+            title={`No ${type} data yet`}
+            description="Usage trends will appear here once bills are recorded."
+          />
+        ) : (
         <div className="w-full bg-card/50 rounded-2xl border border-border/40 p-4 pt-6 pb-2 shadow-sm">
           <ResponsiveContainer width="100%" height={260}>
             <LineChart
@@ -92,6 +102,7 @@ function UsageChart({
             </LineChart>
           </ResponsiveContainer>
         </div>
+        )}
       </LoadingView>
     </section>
   );

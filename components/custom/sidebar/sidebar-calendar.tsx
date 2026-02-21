@@ -1,12 +1,20 @@
 import { Calendar } from "@/components/ui/calendar";
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { House } from "@/models/house";
 import { useEffect, useState, useMemo } from "react";
 import { GetAllHouses } from "@/services/house-service";
-import { Clock, CalendarClock, AlertCircle } from "lucide-react";
+import { Clock, CalendarClock, AlertCircle, Receipt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
+import NoData from "@/components/custom/no-data";
 
 export function SideBarCalendar() {
   const { user } = useAuth();
@@ -87,8 +95,9 @@ export function SideBarCalendar() {
         </SidebarGroupContent>
       </SidebarGroup>
 
-      {/* RENTER VIEW: Fancy remaining days UI */}
-      {isRenter && renterRemainingDays && (
+      {/* RENTER VIEW: Fancy remaining days UI or empty */}
+      {isRenter && !loading && (
+        renterRemainingDays ? (
         <SidebarGroup className="px-4 py-2 mt-0 border-t border-border/50">
           <div className={cn(
             "relative overflow-hidden rounded-xl border p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all",
@@ -121,15 +130,25 @@ export function SideBarCalendar() {
             </p>
           </div>
         </SidebarGroup>
-      )}
+      ) : (
+        <SidebarGroup className="px-4 py-2 mt-0 border-t border-border/50">
+          <NoData
+            icon={Receipt}
+            title="No billing schedule"
+            description="Your next invoice date will appear once set up."
+            className="py-8 px-4 min-h-[120px]"
+          />
+        </SidebarGroup>
+      ))}
 
-      {/* ADMIN VIEW: Upcoming Bills List */}
-      {!isRenter && remainingList.length > 0 && (
+      {/* ADMIN VIEW: Upcoming Bills List or empty */}
+      {!isRenter && !loading && (
         <SidebarGroup>
           <SidebarGroupLabel>Upcoming Bills</SidebarGroupLabel>
           <SidebarGroupContent>
+            {remainingList.length > 0 ? (
             <SidebarMenu>
-              {remainingList.map(({ house, days, date }) => (
+              {remainingList.map(({ house, days }) => (
                 <SidebarMenuItem key={house.id}>
                   <SidebarMenuButton className="flex items-center justify-between text-xs cursor-default hover:bg-transparent hover:text-sidebar-foreground">
                     <span className="truncate flex-1">{house.name}</span>
@@ -144,6 +163,14 @@ export function SideBarCalendar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
+            ) : (
+              <NoData
+                icon={Receipt}
+                title="No upcoming bills"
+                description="Billing dates will appear when houses are configured."
+                className="py-6 px-4 min-h-[120px]"
+              />
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
       )}

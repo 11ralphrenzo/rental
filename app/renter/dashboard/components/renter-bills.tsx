@@ -4,6 +4,7 @@ import { Bill } from "@/models/bill";
 import React from "react";
 import CustomBill from "./custom-bill";
 import LoadingView from "@/components/custom/loading-view";
+import { Receipt } from "lucide-react";
 
 type RenterBillsProps = {
   className?: string;
@@ -25,7 +26,11 @@ function RenterBills({ className, bills }: RenterBillsProps) {
           {bills && bills.length > 0 ? (
             bills.map((bill) => <CustomBill key={bill.id} bill={bill} />)
           ) : (
-            <NoData />
+            <NoData
+              icon={Receipt}
+              title="No bills yet"
+              description="Your payment history will appear here once your landlord adds bills."
+            />
           )}
         </div>
       </LoadingView>
