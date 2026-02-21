@@ -18,19 +18,19 @@ function RenterPin({ value, onChange, onComplete }: RenterPinProps) {
       <InputOTPGroup className="renter-pin-group ">
         <InputOTPSlot
           index={0}
-          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
+          className="renter-pin-slot size-12 sm:size-11"
         />
         <InputOTPSlot
           index={1}
-          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
+          className="renter-pin-slot size-12 sm:size-11"
         />
         <InputOTPSlot
           index={2}
-          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
+          className="renter-pin-slot size-12 sm:size-11"
         />
         <InputOTPSlot
           index={3}
-          className="renter-pin-slot w-15 h-15 sm:w-12 sm:h-12"
+          className="renter-pin-slot size-12 sm:size-11"
         />
       </InputOTPGroup>
     </InputOTP>
