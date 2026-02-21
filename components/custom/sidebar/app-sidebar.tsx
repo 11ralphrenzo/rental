@@ -1,7 +1,7 @@
 import * as React from "react";
 import { HouseHeart, ReceiptText, UsersRound } from "lucide-react";
 
-import { DatePicker } from "@/components/custom/sidebar/date-picker";
+import { SideBarCalendar } from "@/components/custom/sidebar/date-picker";
 import { NavUser } from "@/components/custom/sidebar/nav-user";
 import {
   Sidebar,
@@ -24,7 +24,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser user={user} />
       </SidebarHeader>
       <SidebarContent>
-        <DatePicker />
+        <SideBarCalendar />
         <SidebarSeparator className="mx-0" />
         {/* <Calendars calendars={data.calendars} /> */}
         <SidebarMenu>
@@ -81,7 +81,7 @@ export function AppRenterSidebar({
         <NavUser user={user} />
       </SidebarHeader>
       <SidebarContent>
-        <DatePicker />
+        <SideBarCalendar />
         <SidebarSeparator className="mx-0" />
         {/* <Calendars calendars={data.calendars} /> */}
         {/* <SidebarMenu>
