@@ -2,11 +2,21 @@ import { supabase } from "@/lib/supabaseClient";
 import { Bill } from "@/models/bill";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
-  const { data, error } = await supabase
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const renterId = searchParams.get("renterId");
+
+  let query = supabase
     .from("bills")
     .select("*, renters(id, name, houses(id, name, monthly, elect_rate, water_rate, billing_day))")
     .order("month", { ascending: false });
+
+  if (renterId) {
+    query = query.eq("renterId", Number(renterId));
+  }
+
+  const { data, error } = await query;
+
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data.map(formatResponse));

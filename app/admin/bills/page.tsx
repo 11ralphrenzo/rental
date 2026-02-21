@@ -24,6 +24,7 @@ import { DefSelect } from "@/components/reusable/def-select";
 import {
   DeleteBill,
   GetAllBills,
+  GetLatestBillByRenter,
   SaveBill,
   UpdateBill,
 } from "@/services/bills-service";
@@ -45,6 +46,7 @@ function Page() {
   });
   const [bills, setBills] = useState<Bill[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingLatestBill, setIsLoadingLatestBill] = useState(false);
   const [toDelete, setToDelete] = useState<Bill | null>(null);
 
   const {
@@ -70,6 +72,9 @@ function Page() {
   const totalWater = useWatch({ control, name: "total_water" });
   const rent = useWatch({ control, name: "rent" });
   const others = useWatch({ control, name: "others" });
+  const renterId = useWatch({ control, name: "renterId" });
+
+  const isFieldsDisabled = !renterId;
 
   useEffect(() => {
     if (selectedBill || isAdding) return;
@@ -279,7 +284,7 @@ function Page() {
               render={({ field }) => (
                 <DefSelect
                   value={field.value}
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     field.onChange(e);
 
                     const renter = renters?.find((r) => r.id === Number(e));
@@ -292,6 +297,21 @@ function Page() {
                         const d = new Date();
                         d.setDate(renter.house.billing_day);
                         setValue("month", d);
+                      }
+                    }
+
+                    if (isAdding && e) {
+                      setIsLoadingLatestBill(true);
+                      try {
+                        const latestBill = await GetLatestBillByRenter(Number(e));
+                        if (latestBill) {
+                          setValue("prev_electricity", latestBill.curr_electricity);
+                          setValue("prev_water", latestBill.curr_water);
+                        }
+                      } catch {
+                        // ignore - renter may have no bills yet
+                      } finally {
+                        setIsLoadingLatestBill(false);
                       }
                     }
                   }}
@@ -314,6 +334,7 @@ function Page() {
                 min={0}
                 className="flex-1"
                 placeholder="Monthly Rent"
+                disabled={isFieldsDisabled}
                 {...register("rent", { required: "Rent is required." })}
               />
               {errors.rent && (
@@ -331,6 +352,7 @@ function Page() {
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Select month"
+                    disabled={isFieldsDisabled}
                   />
                 )}
               />
@@ -348,6 +370,7 @@ function Page() {
                 min={0}
                 className="w-20"
                 placeholder="Rate"
+                disabled={isFieldsDisabled}
                 {...register("rate_electricity", {
                   required: "Rate is required.",
                 })}
@@ -358,6 +381,7 @@ function Page() {
                 min={0}
                 className="flex-1"
                 placeholder="Previous"
+                disabled={isFieldsDisabled}
                 {...register("prev_electricity", {
                   required: "Previous Reading is required.",
                 })}
@@ -367,6 +391,7 @@ function Page() {
                 min={0}
                 className="flex-1"
                 placeholder="Current"
+                disabled={isFieldsDisabled}
                 {...register("curr_electricity", {
                   required: "Current is required.",
                 })}
@@ -389,6 +414,7 @@ function Page() {
                 min={0}
                 className="w-20"
                 placeholder="Rate"
+                disabled={isFieldsDisabled}
                 {...register("rate_water", {
                   required: "Rate is required.",
                 })}
@@ -399,6 +425,7 @@ function Page() {
                 min={0}
                 className="flex-1"
                 placeholder="Previous"
+                disabled={isFieldsDisabled}
                 {...register("prev_water", {
                   required: "Previous Reading is required.",
                 })}
@@ -408,6 +435,7 @@ function Page() {
                 min={0}
                 className="flex-1"
                 placeholder="Current"
+                disabled={isFieldsDisabled}
                 {...register("curr_water", {
                   required: "Current is required.",
                 })}
@@ -429,6 +457,7 @@ function Page() {
                 className="w-50"
                 min={0}
                 placeholder="Other Charges"
+                disabled={isFieldsDisabled}
                 {...register("others", { valueAsNumber: true })}
               />
             </div>
@@ -533,7 +562,7 @@ function Page() {
                 </Button>
               )}
 
-              <Button className="flex-1" type="submit" disabled={isSubmitting}>
+              <Button className="flex-1" type="submit" disabled={isSubmitting || isFieldsDisabled || isLoadingLatestBill}>
                 <Save />
                 {isAdding ? "Save" : "Update"}
               </Button>
