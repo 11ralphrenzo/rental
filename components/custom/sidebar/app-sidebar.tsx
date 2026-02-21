@@ -1,7 +1,7 @@
 import * as React from "react";
 import { HouseHeart, ReceiptText, UsersRound } from "lucide-react";
 
-import { SideBarCalendar } from "@/components/custom/sidebar/date-picker";
+import { SideBarCalendar } from "@/components/custom/sidebar/sidebar-calendar";
 import { NavUser } from "@/components/custom/sidebar/nav-user";
 import {
   Sidebar,

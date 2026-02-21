@@ -16,5 +16,6 @@ export type AuthUser = {
   userName?: string;
   name: string;
   type?: string | undefined;
+  houseId?: number;
   accessToken: string;
 };
