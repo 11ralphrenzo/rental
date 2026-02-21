@@ -11,7 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Bill } from "@/models/bill";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatToTwoDecimals } from "@/lib/utils";
 import LoadingView from "@/components/custom/loading-view";
 
@@ -42,41 +41,59 @@ function UsageChart({
     })) || [];
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <span className="text-lg font-semibold">
+    <section className={className}>
+      <div className="flex flex-col space-y-1 mb-6 px-1">
+        <h2 className="text-xl font-bold tracking-tight">
           {type === "electricity" ? "⚡ Electricity" : "💧 Water"} Usage
-        </span>
-        <span className="text-sm text-muted-foreground">
-          {type === "electricity" ? "kWh" : "m³"}
-        </span>
-      </CardHeader>
-      <CardContent>
-        <LoadingView isLoading={bills === undefined}>
-          <ResponsiveContainer height={250}>
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Historical consumption tracked in {type === "electricity" ? "kWh" : "m³"}.
+        </p>
+      </div>
+
+      <LoadingView isLoading={bills === undefined}>
+        <div className="w-full bg-card/50 rounded-2xl border border-border/40 p-4 pt-6 pb-2 shadow-sm">
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart
               data={chartData}
-              margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
+              margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
+              <XAxis
+                dataKey="month"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "currentColor", opacity: 0.6, fontSize: 12 }}
+                dy={10}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "currentColor", opacity: 0.6, fontSize: 12 }}
+              />
+              <Tooltip
+                contentStyle={{
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                  backgroundColor: 'var(--background)',
+                  color: 'var(--foreground)'
+                }}
+                itemStyle={{ fontWeight: 600 }}
+              />
               <Line
                 type="monotone"
                 dataKey="data"
-                stroke={type === "electricity" ? "#ff9900" : "#3d85c6"}
+                stroke={type === "electricity" ? "#ff9900" : "#3b82f6"}
                 strokeWidth={4}
-                name={
-                  type === "electricity" ? "Electricity (kWh)" : "Water (m³)"
-                }
+                dot={{ r: 4, strokeWidth: 2, fill: "var(--background)" }}
+                activeDot={{ r: 6, strokeWidth: 0 }}
+                name={type === "electricity" ? "Electricity (kWh)" : "Water (m³)"}
               />
             </LineChart>
           </ResponsiveContainer>
-        </LoadingView>
-      </CardContent>
-    </Card>
+        </div>
+      </LoadingView>
+    </section>
   );
 }
 
