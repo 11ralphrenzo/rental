@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   const { data, error } = await supabase
     .from("renters")
-    .select("*, houses(id, name, monthly)")
+    .select("*, houses(id, name, monthly, elect_rate, water_rate, billing_day)")
     .order("name", { ascending: true });
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -12,7 +12,8 @@ import {
   formatToTwoDecimals,
   handleAxiosError,
 } from "@/lib/utils";
-import { CirclePlus, Pencil, Save, Trash2 } from "lucide-react";
+import { CirclePlus, Download, Eye, Pencil, Save, Trash2 } from "lucide-react";
+import { downloadBillPdf, viewBillPdf } from "@/lib/generate-bill-pdf";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -282,8 +283,16 @@ function Page() {
                     field.onChange(e);
 
                     const renter = renters?.find((r) => r.id === Number(e));
-                    if (renter && renter.house?.monthly) {
-                      setValue("rent", renter.house.monthly);
+                    if (renter && renter.house) {
+                      if (renter.house.monthly) setValue("rent", renter.house.monthly);
+                      if (renter.house.elect_rate) setValue("rate_electricity", renter.house.elect_rate);
+                      if (renter.house.water_rate) setValue("rate_water", renter.house.water_rate);
+
+                      if (renter.house.billing_day) {
+                        const d = new Date();
+                        d.setDate(renter.house.billing_day);
+                        setValue("month", d);
+                      }
                     }
                   }}
                   placeholder="Select Renter"
@@ -486,6 +495,29 @@ function Page() {
                 </span>
               )}
             </div> */}
+
+            {!isAdding && selectedBill && (
+              <div className="flex space-x-2">
+                <Button
+                  className="flex-1"
+                  type="button"
+                  variant="outline"
+                  onClick={() => downloadBillPdf(selectedBill)}
+                >
+                  <Download className="w-4 h-4" />
+                  Download Bill
+                </Button>
+                <Button
+                  className="flex-1"
+                  type="button"
+                  variant="outline"
+                  onClick={() => viewBillPdf(selectedBill)}
+                >
+                  <Eye className="w-4 h-4" />
+                  View Bill
+                </Button>
+              </div>
+            )}
 
             <div className="flex space-x-2">
               {!isAdding && selectedBill && (

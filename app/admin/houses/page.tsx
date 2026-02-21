@@ -127,13 +127,24 @@ function Page() {
       >
         {houses && (
           <DefTable
-            columns={["ID", "Name", "Monthly", ""]}
+            columns={[
+              "ID",
+              "Name",
+              "Monthly",
+              "Elect Rate",
+              "Water Rate",
+              "Billing Date",
+              "",
+            ]}
             data={houses}
             renderRow={(house) => (
               <TableRow key={house.id}>
                 <TableCell>{house.id}</TableCell>
                 <TableCell>{house.name}</TableCell>
                 <TableCell>{house.monthly}</TableCell>
+                <TableCell>{house.elect_rate}</TableCell>
+                <TableCell>{house.water_rate}</TableCell>
+                <TableCell>{house.billing_day}</TableCell>
                 <TableCell className="flex space-x-2 w-2">
                   <Button
                     className="cursor-pointer"
@@ -167,8 +178,8 @@ function Page() {
             setSelectedHouse(null);
             if (isAdding) close();
           }}
-          title={selectedHouse ? selectedHouse.name : "Add New House"}
-          description="Details of the selected House"
+          title={selectedHouse ? `Edit House: ${selectedHouse.name}` : "Add New House"}
+          description="Fill out the form below to add or edit house details."
         >
           <form
             className="flex flex-col space-y-4 p-4"
@@ -183,18 +194,67 @@ function Page() {
                 {errors.name.message}
               </span>
             )}
-            <Input
-              type="number"
-              placeholder="Monthly Rent"
-              min={0}
-              max={100000}
-              {...register("monthly", { required: "Monthly is required." })}
-            />
-            {errors.monthly && (
-              <span className="text-sm text-red-500">
-                {errors.monthly.message}
-              </span>
-            )}
+            <div className="flex space-x-2">
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  placeholder="Monthly Rent"
+                  min={0}
+                  step="0.01"
+                  {...register("monthly", { required: "Monthly is required." })}
+                />
+                {errors.monthly && (
+                  <span className="text-sm text-red-500">
+                    {errors.monthly.message}
+                  </span>
+                )}
+              </div>
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  placeholder="Billing Day (1-31)"
+                  min={1}
+                  max={31}
+                  {...register("billing_day", { required: "Date is required." })}
+                />
+                {errors.billing_day && (
+                  <span className="text-sm text-red-500">
+                    {errors.billing_day.message}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex space-x-2">
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  placeholder="Electricity Rate"
+                  min={0}
+                  step="0.01"
+                  {...register("elect_rate", { required: "Elect Rate is required." })}
+                />
+                {errors.elect_rate && (
+                  <span className="text-sm text-red-500">
+                    {errors.elect_rate.message}
+                  </span>
+                )}
+              </div>
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  placeholder="Water Rate"
+                  min={0}
+                  step="0.01"
+                  {...register("water_rate", { required: "Water Rate is required." })}
+                />
+                {errors.water_rate && (
+                  <span className="text-sm text-red-500">
+                    {errors.water_rate.message}
+                  </span>
+                )}
+              </div>
+            </div>
 
             <div className="flex space-x-2">
               {!isAdding && selectedHouse && (

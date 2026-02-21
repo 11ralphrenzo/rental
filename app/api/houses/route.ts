@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, name, monthly }: House = await req.json();
+    const { id, name, monthly, elect_rate, water_rate, billing_day }: House = await req.json();
 
     const { data, error } = await supabase
       .from("houses")
-      .insert({ id, name, monthly })
+      .insert({ id, name, monthly, elect_rate, water_rate, billing_day })
       .select()
       .single();
 
@@ -47,11 +47,11 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const { id, name, monthly }: House = await req.json();
+    const { id, name, monthly, elect_rate, water_rate, billing_day }: House = await req.json();
 
     const { data, error } = await supabase
       .from("houses")
-      .update({ name, monthly })
+      .update({ name, monthly, elect_rate, water_rate, billing_day })
       .eq("id", id)
       .select()
       .single();
@@ -76,4 +76,7 @@ const formatResponse = (house: House) => ({
   id: house.id,
   name: house.name,
   monthly: house.monthly,
+  elect_rate: house.elect_rate,
+  water_rate: house.water_rate,
+  billing_day: house.billing_day,
 });
