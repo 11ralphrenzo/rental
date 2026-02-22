@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
 import {
+  BillStatusOptions,
+  billStatusStyle,
   formatCurrency,
   formatDate,
   formatToTwoDecimals,
@@ -30,6 +32,8 @@ import {
 } from "@/services/bills-service";
 import { Bill } from "@/models/bill";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { BillStatus } from "@/lib/enum";
 
 function Page() {
   const {
@@ -41,7 +45,10 @@ function Page() {
     setValue,
   } = useForm<Bill>({
     defaultValues: {
+      status: BillStatus.PENDING,
+      renterId: undefined,
       month: new Date(),
+      others: 0,
     },
   });
   const [bills, setBills] = useState<Bill[] | undefined>(undefined);
@@ -129,7 +136,7 @@ function Page() {
       Number(totalElectric ?? 0) +
       Number(totalWater ?? 0) +
       Number(others ?? 0);
-    setValue("total", total);
+    setValue("total", total ?? 0);
   }, [
     rent,
     totalWater,
@@ -205,24 +212,33 @@ function Page() {
         {bills && (
           <DefTable
             columns={[
+              "Status",
               "Date",
               "Renter",
               "Monthly Rent",
               // "Rate Elec",
               // "Prev Elec",
               // "Curr Elect",
-              "Total Elect",
+              "Electricity",
               // "Rate Water",
               // "Prev Water",
               // "Curr Water",
-              "Total Water",
-              "Other Charges",
-              "Total Bill",
+              "Water",
+              "Other",
+              "Total",
               "Actions",
             ]}
             data={bills}
             renderRow={(bill) => (
               <TableRow key={bill.id}>
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    className={`h-5 text-xs ${billStatusStyle[bill.status]}`}
+                  >
+                    {bill.status}
+                  </Badge>
+                </TableCell>
                 <TableCell>{formatDate(bill.month)}</TableCell>
                 <TableCell>{bill.renter?.name}</TableCell>
                 <TableCell>{formatCurrency(bill.rent)}</TableCell>
@@ -277,60 +293,80 @@ function Page() {
             className="flex flex-col space-y-4 p-4"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Controller
-              name="renterId"
-              control={control}
-              rules={{ required: "Renter is required." }}
-              render={({ field }) => (
-                <DefSelect
-                  value={field.value}
-                  onChange={async (e) => {
-                    field.onChange(e);
+            <div className="flex gap-2">
+              <Controller
+                name="status"
+                control={control}
+                rules={{ required: "Status is required." }}
+                render={({ field }) => (
+                  <DefSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select Status"
+                    className="w-3xs"
+                    options={BillStatusOptions.map((d) => ({
+                      value: d,
+                      label: d,
+                    }))}
+                  />
+                )}
+              />
+              <Controller
+                name="renterId"
+                control={control}
+                rules={{ required: "Renter is required." }}
+                render={({ field }) => (
+                  <DefSelect
+                    value={field.value}
+                    onChange={async (e) => {
+                      field.onChange(e);
 
-                    const renter = renters?.find((r) => r.id === Number(e));
-                    if (renter && renter.house) {
-                      if (renter.house.monthly)
-                        setValue("rent", renter.house.monthly);
-                      if (renter.house.elect_rate)
-                        setValue("rate_electricity", renter.house.elect_rate);
-                      if (renter.house.water_rate)
-                        setValue("rate_water", renter.house.water_rate);
+                      const renter = renters?.find((r) => r.id === Number(e));
+                      if (renter && renter.house) {
+                        if (renter.house.monthly)
+                          setValue("rent", renter.house.monthly);
+                        if (renter.house.elect_rate)
+                          setValue("rate_electricity", renter.house.elect_rate);
+                        if (renter.house.water_rate)
+                          setValue("rate_water", renter.house.water_rate);
 
-                      if (renter.house.billing_day) {
-                        const d = new Date();
-                        d.setDate(renter.house.billing_day);
-                        setValue("month", d);
-                      }
-                    }
-
-                    if (isAdding && e) {
-                      setIsLoadingLatestBill(true);
-                      try {
-                        const latestBill = await GetLatestBillByRenter(
-                          Number(e),
-                        );
-                        if (latestBill) {
-                          setValue(
-                            "prev_electricity",
-                            latestBill.curr_electricity,
-                          );
-                          setValue("prev_water", latestBill.curr_water);
+                        if (renter.house.billing_day) {
+                          const d = new Date();
+                          d.setDate(renter.house.billing_day);
+                          setValue("month", d);
                         }
-                      } catch {
-                        // ignore - renter may have no bills yet
-                      } finally {
-                        setIsLoadingLatestBill(false);
                       }
-                    }
-                  }}
-                  placeholder="Select Renter"
-                  options={renters?.map((renter) => ({
-                    value: renter.id,
-                    label: renter.name,
-                  }))}
-                />
-              )}
-            />
+
+                      if (isAdding && e) {
+                        setIsLoadingLatestBill(true);
+                        try {
+                          const latestBill = await GetLatestBillByRenter(
+                            Number(e),
+                          );
+                          if (latestBill) {
+                            setValue(
+                              "prev_electricity",
+                              latestBill.curr_electricity,
+                            );
+                            setValue("prev_water", latestBill.curr_water);
+                          }
+                        } catch {
+                          // ignore - renter may have no bills yet
+                        } finally {
+                          setIsLoadingLatestBill(false);
+                        }
+                      }
+                    }}
+                    placeholder="Select Renter"
+                    options={renters?.map((renter) => ({
+                      value: renter.id,
+                      label: renter.name,
+                    }))}
+                  />
+                )}
+              />
+            </div>
+
             {errors.renterId && (
               <span className="text-sm text-red-500">
                 {errors.renterId.message}
@@ -475,7 +511,7 @@ function Page() {
             <div className="flex justify-between pb-2 px-2 bg-slate-100 rounded p-2">
               <span className="text-sm font-medium">Total Bill:</span>
               <span className="text-sm font-semibold">
-                {formatCurrency(grandTotal)}
+                {formatCurrency(grandTotal ?? 0)}
               </span>
             </div>
 

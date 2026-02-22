@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { format, formatDuration, intervalToDuration } from "date-fns";
+import { BillStatus } from "./enum";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -100,3 +101,15 @@ export function getDuration(
 
   return parts.length > 0 ? parts.join(" ") : "Less than 1 month";
 }
+
+// Bills
+
+export const billStatusStyle: Record<BillStatus, string> = {
+  PENDING: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  PARTIAL: "bg-blue-100 text-blue-800 border-blue-200",
+  PAID: "bg-green-100 text-green-800 border-green-200",
+  OVERDUE: "bg-red-100 text-red-800 border-red-200",
+  CANCELLED: "bg-gray-100 text-gray-600 border-gray-200",
+};
+
+export const BillStatusOptions = Object.values(BillStatus);

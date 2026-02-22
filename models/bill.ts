@@ -1,3 +1,4 @@
+import { BillStatus } from "@/lib/enum";
 import { Renter } from "./renter";
 
 export type Bill = {
@@ -16,7 +17,7 @@ export type Bill = {
   total_water: number;
   others: number;
   total: number;
-  status: number;
+  status: BillStatus;
   createdAt: Date;
 
   //   For Supabase Purpose

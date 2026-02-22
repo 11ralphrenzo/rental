@@ -15,7 +15,10 @@ const pinSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // 1. Rate Limiting Check
-    const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown-ip";
+    const ip =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown-ip";
     const now = Date.now();
     const rt = rateLimitMap.get(ip);
 
@@ -24,7 +27,7 @@ export async function POST(request: NextRequest) {
         if (rt.count >= MAX_ATTEMPTS) {
           return NextResponse.json(
             { message: "Too many login attempts. Please try again later." },
-            { status: 429 }
+            { status: 429 },
           );
         }
         rt.count++;
@@ -43,7 +46,7 @@ export async function POST(request: NextRequest) {
     if (!parseResult.success) {
       return NextResponse.json(
         { message: "Invalid PIN format." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,7 +66,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message:
-            "There was an error with your house/pin combination. Please try again",
+            "There was an error with your house/pin combination. Please try again.",
         },
         { status: 400 },
       );
@@ -91,7 +94,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     return NextResponse.json(
       { message: "An unexpected error occurred." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

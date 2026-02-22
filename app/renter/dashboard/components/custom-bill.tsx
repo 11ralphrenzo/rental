@@ -1,8 +1,10 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
+import { BillStatus } from "@/lib/enum";
 import { downloadBillPdf, viewBillPdf } from "@/lib/generate-bill-pdf";
-import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { formatCurrency, formatDate, cn, billStatusStyle } from "@/lib/utils";
 import { Bill } from "@/models/bill";
 import {
   ChevronDown,
@@ -55,7 +57,7 @@ function CustomBill({ bill }: CustomBillProps) {
             </span>
             <span
               className={cn(
-                "text-lg font-bold tabular-nums tracking-tight",
+                "text-md font-bold tabular-nums tracking-tight",
                 isOpen ? "text-primary" : "text-foreground",
               )}
             >
@@ -66,6 +68,17 @@ function CustomBill({ bill }: CustomBillProps) {
 
         {/* Right Side: Caret */}
         <div className="flex items-center pl-4 bg-transparent border-none">
+          {!isOpen &&
+            (bill.status === BillStatus.PENDING ||
+              bill.status === BillStatus.PARTIAL ||
+              bill.status === BillStatus.OVERDUE) && (
+              <Badge
+                variant="outline"
+                className={`h-4 text-[9px] ${billStatusStyle[bill.status]}`}
+              >
+                {bill.status}
+              </Badge>
+            )}
           <Button
             variant="ghost"
             size="icon"
@@ -160,9 +173,15 @@ function CustomBill({ bill }: CustomBillProps) {
               <div className="p-1.5 rounded-md bg-primary/10 text-primary">
                 <Receipt className="h-4 w-4" />
               </div>
-              <span className="font-semibold text-primary">
+              <span className="font-semibold text-primary flex-1">
                 Summary Breakdown
               </span>
+              <Badge
+                variant="outline"
+                className={`h-4 text-[9px] ${billStatusStyle[bill.status]}`}
+              >
+                {bill.status}
+              </Badge>
             </div>
             <div className="grid grid-cols-2 gap-y-2 text-sm">
               <span className="text-muted-foreground">Base Rent:</span>
