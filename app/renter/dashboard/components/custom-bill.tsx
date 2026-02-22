@@ -1,13 +1,18 @@
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
+import { downloadBillPdf, viewBillPdf } from "@/lib/generate-bill-pdf";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 import { Bill } from "@/models/bill";
-import { ChevronDown, ChevronUp, Droplets, Zap, Receipt } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Droplets,
+  Zap,
+  Receipt,
+  Download,
+  Eye,
+} from "lucide-react";
 import { useState } from "react";
 
 type CustomBillProps = {
@@ -20,13 +25,18 @@ function CustomBill({ bill }: CustomBillProps) {
     <Collapsible
       className={cn(
         "flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm transition-all duration-200",
-        isOpen ? "ring-1 ring-primary/20 shadow-md" : "hover:shadow-md hover:border-border/80"
+        isOpen
+          ? "ring-1 ring-primary/20 shadow-md"
+          : "hover:shadow-md hover:border-border/80",
       )}
       key={bill.id}
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <div className="flex items-center px-5 py-4 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+      <div
+        className="flex items-center px-5 py-4 cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         {/* Left Side: Month Badge */}
         <div className="flex items-center gap-4 flex-1">
           <div className="flex flex-col items-center justify-center bg-primary/10 text-primary rounded-lg px-3 py-1.5 min-w-[3.5rem]">
@@ -43,10 +53,12 @@ function CustomBill({ bill }: CustomBillProps) {
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Total Due
             </span>
-            <span className={cn(
-              "text-lg font-bold tabular-nums tracking-tight",
-              isOpen ? "text-primary" : "text-foreground"
-            )}>
+            <span
+              className={cn(
+                "text-lg font-bold tabular-nums tracking-tight",
+                isOpen ? "text-primary" : "text-foreground",
+              )}
+            >
               {formatCurrency(bill.total)}
             </span>
           </div>
@@ -54,8 +66,16 @@ function CustomBill({ bill }: CustomBillProps) {
 
         {/* Right Side: Caret */}
         <div className="flex items-center pl-4 bg-transparent border-none">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground pointer-events-none rounded-full">
-            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground pointer-events-none rounded-full"
+          >
+            {isOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
             <span className="sr-only">Toggle details</span>
           </Button>
         </div>
@@ -64,7 +84,6 @@ function CustomBill({ bill }: CustomBillProps) {
         <Separator className="mb-4 opacity-50" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
           {/* Electricity Block */}
           <div className="flex flex-col rounded-xl bg-muted/40 p-3 text-sm border shadow-sm">
             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border/50">
@@ -75,19 +94,31 @@ function CustomBill({ bill }: CustomBillProps) {
             </div>
             <div className="grid grid-cols-2 gap-y-1.5 text-xs">
               <span className="text-muted-foreground">Current Read:</span>
-              <span className="text-right font-medium">{bill.curr_electricity}</span>
+              <span className="text-right font-medium">
+                {bill.curr_electricity}
+              </span>
               <span className="text-muted-foreground">Previous Read:</span>
-              <span className="text-right font-medium">{bill.prev_electricity}</span>
+              <span className="text-right font-medium">
+                {bill.prev_electricity}
+              </span>
               <span className="text-muted-foreground">Consumed:</span>
               <span className="text-right font-medium">
-                {Number(bill.curr_electricity - bill.prev_electricity).toFixed(2)}
+                {Number(bill.curr_electricity - bill.prev_electricity).toFixed(
+                  2,
+                )}
               </span>
               <span className="text-muted-foreground">Rate:</span>
-              <span className="text-right font-medium">{formatCurrency(bill.rate_electricity)}</span>
+              <span className="text-right font-medium">
+                {formatCurrency(bill.rate_electricity)}
+              </span>
             </div>
             <div className="mt-auto pt-2 mt-2 border-t border-border/50 flex justify-between items-center h-7">
-              <span className="text-xs font-semibold text-muted-foreground">Total:</span>
-              <span className="text-sm font-bold">{formatCurrency(bill.total_electricity)}</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                Total:
+              </span>
+              <span className="text-sm font-bold">
+                {formatCurrency(bill.total_electricity)}
+              </span>
             </div>
           </div>
 
@@ -109,11 +140,17 @@ function CustomBill({ bill }: CustomBillProps) {
                 {Number(bill.curr_water - bill.prev_water).toFixed(2)}
               </span>
               <span className="text-muted-foreground">Rate:</span>
-              <span className="text-right font-medium">{formatCurrency(bill.rate_water)}</span>
+              <span className="text-right font-medium">
+                {formatCurrency(bill.rate_water)}
+              </span>
             </div>
             <div className="mt-auto pt-2 mt-2 border-t border-border/50 flex justify-between items-center h-7">
-              <span className="text-xs font-semibold text-muted-foreground">Total:</span>
-              <span className="text-sm font-bold">{formatCurrency(bill.total_water)}</span>
+              <span className="text-xs font-semibold text-muted-foreground">
+                Total:
+              </span>
+              <span className="text-sm font-bold">
+                {formatCurrency(bill.total_water)}
+              </span>
             </div>
           </div>
 
@@ -123,29 +160,61 @@ function CustomBill({ bill }: CustomBillProps) {
               <div className="p-1.5 rounded-md bg-primary/10 text-primary">
                 <Receipt className="h-4 w-4" />
               </div>
-              <span className="font-semibold text-primary">Summary Breakdown</span>
+              <span className="font-semibold text-primary">
+                Summary Breakdown
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-y-2 text-sm">
               <span className="text-muted-foreground">Base Rent:</span>
-              <span className="text-right font-medium">{formatCurrency(bill.rent)}</span>
+              <span className="text-right font-medium">
+                {formatCurrency(bill.rent)}
+              </span>
 
               <span className="text-muted-foreground">Electricity:</span>
-              <span className="text-right font-medium">{formatCurrency(bill.total_electricity)}</span>
+              <span className="text-right font-medium">
+                {formatCurrency(bill.total_electricity)}
+              </span>
 
               <span className="text-muted-foreground">Water:</span>
-              <span className="text-right font-medium">{formatCurrency(bill.total_water)}</span>
+              <span className="text-right font-medium">
+                {formatCurrency(bill.total_water)}
+              </span>
 
               <span className="text-muted-foreground">Other Charges:</span>
-              <span className="text-right font-medium">{formatCurrency(bill.others)}</span>
+              <span className="text-right font-medium">
+                {formatCurrency(bill.others)}
+              </span>
             </div>
             <div className="mt-3 pt-3 border-t border-primary/20 flex justify-between items-center">
-              <span className="text-sm font-bold text-foreground">Total Amount</span>
+              <span className="text-sm font-bold text-foreground">
+                Total Amount
+              </span>
               <span className="text-lg font-black text-primary tabular-nums tracking-tight">
                 {formatCurrency(bill.total)}
               </span>
             </div>
           </div>
 
+          <div className="col-span-1 md:col-span-2 flex space-x-2">
+            <Button
+              className="flex-1"
+              type="button"
+              variant="outline"
+              onClick={() => downloadBillPdf(bill)}
+            >
+              <Download className="w-4 h-4" />
+              Download Bill
+            </Button>
+            <Button
+              className="flex-1"
+              type="button"
+              variant="outline"
+              onClick={() => viewBillPdf(bill)}
+            >
+              <Eye className="w-4 h-4" />
+              View Bill
+            </Button>
+          </div>
         </div>
       </CollapsibleContent>
     </Collapsible>
