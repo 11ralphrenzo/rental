@@ -98,10 +98,6 @@ async function buildBillPdf(bill: Bill): Promise<jsPDF> {
 
   // ─── Bill Breakdown Table ──────────────────────────────────────────
   const tableWidth = pageWidth - 28; // 14 margin on each side
-  const electricUsage =
-    Number(bill.curr_electricity) - Number(bill.prev_electricity);
-  const waterUsage = Number(bill.curr_water) - Number(bill.prev_water);
-
   autoTable(doc, {
     startY: startY + 26,
     tableWidth: tableWidth,

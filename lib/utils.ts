@@ -85,6 +85,7 @@ export function formatToTwoDecimals(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+// Date
 export function getDuration(
   startDate: Date | string,
   endDate?: Date | string | null,
@@ -102,8 +103,27 @@ export function getDuration(
   return parts.length > 0 ? parts.join(" ") : "Less than 1 month";
 }
 
-// Bills
+export function toOrdinal(n: number): string {
+  const remainder10 = n % 10;
+  const remainder100 = n % 100;
 
+  if (remainder100 >= 11 && remainder100 <= 13) {
+    return `${n}th`;
+  }
+
+  switch (remainder10) {
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
+  }
+}
+
+// Bills
 export const billStatusStyle: Record<BillStatus, string> = {
   PENDING: "bg-yellow-100 text-yellow-800 border-yellow-200",
   PARTIAL: "bg-blue-100 text-blue-800 border-blue-200",

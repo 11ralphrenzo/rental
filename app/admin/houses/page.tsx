@@ -12,7 +12,7 @@ import { DefTable } from "@/components/reusable/def-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { formatCurrency, handleAxiosError } from "@/lib/utils";
+import { formatCurrency, handleAxiosError, toOrdinal } from "@/lib/utils";
 import { House } from "@/models/house";
 import { CirclePlus, HousePlus, Pencil, Save, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -142,7 +142,7 @@ function Page() {
                 <TableCell>{formatCurrency(house.monthly)}</TableCell>
                 <TableCell>{formatCurrency(house.elect_rate)}</TableCell>
                 <TableCell>{formatCurrency(house.water_rate)}</TableCell>
-                <TableCell>{house.billing_day}</TableCell>
+                <TableCell>{toOrdinal(house.billing_day)}</TableCell>
                 <TableCell className="flex space-x-2 w-2">
                   <Button
                     className="cursor-pointer"
