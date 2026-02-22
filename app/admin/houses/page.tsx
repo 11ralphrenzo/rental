@@ -12,9 +12,9 @@ import { DefTable } from "@/components/reusable/def-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { handleAxiosError } from "@/lib/utils";
+import { formatCurrency, handleAxiosError } from "@/lib/utils";
 import { House } from "@/models/house";
-import { CirclePlus, Pencil, Save, Trash2 } from "lucide-react";
+import { CirclePlus, HousePlus, Pencil, Save, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -117,7 +117,7 @@ function Page() {
           onClick={() => openAdd()}
           disabled={!houses}
         >
-          <CirclePlus className="w-4 h-4" />
+          <HousePlus className="w-4 h-4" />
           Add House
         </Button>
       </div>
@@ -128,22 +128,20 @@ function Page() {
         {houses && (
           <DefTable
             columns={[
-              "ID",
               "Name",
               "Monthly",
               "Elect Rate",
               "Water Rate",
               "Billing Date",
-              "",
+              "Actions",
             ]}
             data={houses}
             renderRow={(house) => (
               <TableRow key={house.id}>
-                <TableCell>{house.id}</TableCell>
                 <TableCell>{house.name}</TableCell>
-                <TableCell>{house.monthly}</TableCell>
-                <TableCell>{house.elect_rate}</TableCell>
-                <TableCell>{house.water_rate}</TableCell>
+                <TableCell>{formatCurrency(house.monthly)}</TableCell>
+                <TableCell>{formatCurrency(house.elect_rate)}</TableCell>
+                <TableCell>{formatCurrency(house.water_rate)}</TableCell>
                 <TableCell>{house.billing_day}</TableCell>
                 <TableCell className="flex space-x-2 w-2">
                   <Button
@@ -178,7 +176,11 @@ function Page() {
             setSelectedHouse(null);
             if (isAdding) close();
           }}
-          title={selectedHouse ? `Edit House: ${selectedHouse.name}` : "Add New House"}
+          title={
+            selectedHouse
+              ? `Edit House: ${selectedHouse.name}`
+              : "Add New House"
+          }
           description="Fill out the form below to add or edit house details."
         >
           <form
@@ -215,7 +217,9 @@ function Page() {
                   placeholder="Billing Day (1-31)"
                   min={1}
                   max={31}
-                  {...register("billing_day", { required: "Date is required." })}
+                  {...register("billing_day", {
+                    required: "Date is required.",
+                  })}
                 />
                 {errors.billing_day && (
                   <span className="text-sm text-red-500">
@@ -232,7 +236,9 @@ function Page() {
                   placeholder="Electricity Rate"
                   min={0}
                   step="0.01"
-                  {...register("elect_rate", { required: "Elect Rate is required." })}
+                  {...register("elect_rate", {
+                    required: "Elect Rate is required.",
+                  })}
                 />
                 {errors.elect_rate && (
                   <span className="text-sm text-red-500">
@@ -246,7 +252,9 @@ function Page() {
                   placeholder="Water Rate"
                   min={0}
                   step="0.01"
-                  {...register("water_rate", { required: "Water Rate is required." })}
+                  {...register("water_rate", {
+                    required: "Water Rate is required.",
+                  })}
                 />
                 {errors.water_rate && (
                   <span className="text-sm text-red-500">

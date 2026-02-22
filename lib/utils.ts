@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, formatDuration, intervalToDuration } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -82,4 +82,21 @@ export function formatCurrency(
 // Fortmat 2 Decimals
 export function formatToTwoDecimals(value: number) {
   return Math.round(value * 100) / 100;
+}
+
+export function getDuration(
+  startDate: Date | string,
+  endDate?: Date | string | null,
+) {
+  const start = new Date(startDate);
+  const end = endDate ? new Date(endDate) : new Date();
+  if (!startDate || start > end) return "-";
+
+  const { years = 0, months = 0 } = intervalToDuration({ start, end });
+
+  const parts: string[] = [];
+  if (years > 0) parts.push(`${years} ${years === 1 ? "year" : "years"}`);
+  if (months > 0) parts.push(`${months} ${months === 1 ? "month" : "months"}`);
+
+  return parts.length > 0 ? parts.join(" ") : "Less than 1 month";
 }

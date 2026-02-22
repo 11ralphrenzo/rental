@@ -12,7 +12,7 @@ import {
   formatToTwoDecimals,
   handleAxiosError,
 } from "@/lib/utils";
-import { CirclePlus, Download, Eye, Pencil, Save, Trash2 } from "lucide-react";
+import { Download, Eye, FilePlus, Pencil, Save, Trash2 } from "lucide-react";
 import { downloadBillPdf, viewBillPdf } from "@/lib/generate-bill-pdf";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -194,8 +194,8 @@ function Page() {
           onClick={() => openAdd()}
           disabled={!bills}
         >
-          <CirclePlus className="w-4 h-4" />
-          Add Bill
+          <FilePlus className="w-4 h-4" />
+          New Bill
         </Button>
       </div>
       <LoadingView
@@ -208,17 +208,17 @@ function Page() {
               "Date",
               "Renter",
               "Monthly Rent",
-              "Rate Elec",
-              "Prev Elec",
-              "Curr Elect",
+              // "Rate Elec",
+              // "Prev Elec",
+              // "Curr Elect",
               "Total Elect",
-              "Rate Water",
-              "Prev Water",
-              "Curr Water",
+              // "Rate Water",
+              // "Prev Water",
+              // "Curr Water",
               "Total Water",
               "Other Charges",
               "Total Bill",
-              "",
+              "Actions",
             ]}
             data={bills}
             renderRow={(bill) => (
@@ -226,13 +226,13 @@ function Page() {
                 <TableCell>{formatDate(bill.month)}</TableCell>
                 <TableCell>{bill.renter?.name}</TableCell>
                 <TableCell>{formatCurrency(bill.rent)}</TableCell>
-                <TableCell>{formatCurrency(bill.rate_electricity)}</TableCell>
+                {/* <TableCell>{formatCurrency(bill.rate_electricity)}</TableCell>
                 <TableCell>{bill.prev_electricity}</TableCell>
-                <TableCell>{bill.curr_electricity}</TableCell>
+                <TableCell>{bill.curr_electricity}</TableCell> */}
                 <TableCell>{formatCurrency(bill.total_electricity)}</TableCell>
-                <TableCell>{formatCurrency(bill.rate_water)}</TableCell>
+                {/* <TableCell>{formatCurrency(bill.rate_water)}</TableCell>
                 <TableCell>{bill.prev_water}</TableCell>
-                <TableCell>{bill.curr_water}</TableCell>
+                <TableCell>{bill.curr_water}</TableCell> */}
                 <TableCell>{formatCurrency(bill.total_water)}</TableCell>
                 <TableCell>{formatCurrency(bill.others)}</TableCell>
                 <TableCell>{formatCurrency(bill.total)}</TableCell>
@@ -289,9 +289,12 @@ function Page() {
 
                     const renter = renters?.find((r) => r.id === Number(e));
                     if (renter && renter.house) {
-                      if (renter.house.monthly) setValue("rent", renter.house.monthly);
-                      if (renter.house.elect_rate) setValue("rate_electricity", renter.house.elect_rate);
-                      if (renter.house.water_rate) setValue("rate_water", renter.house.water_rate);
+                      if (renter.house.monthly)
+                        setValue("rent", renter.house.monthly);
+                      if (renter.house.elect_rate)
+                        setValue("rate_electricity", renter.house.elect_rate);
+                      if (renter.house.water_rate)
+                        setValue("rate_water", renter.house.water_rate);
 
                       if (renter.house.billing_day) {
                         const d = new Date();
@@ -303,9 +306,14 @@ function Page() {
                     if (isAdding && e) {
                       setIsLoadingLatestBill(true);
                       try {
-                        const latestBill = await GetLatestBillByRenter(Number(e));
+                        const latestBill = await GetLatestBillByRenter(
+                          Number(e),
+                        );
                         if (latestBill) {
-                          setValue("prev_electricity", latestBill.curr_electricity);
+                          setValue(
+                            "prev_electricity",
+                            latestBill.curr_electricity,
+                          );
                           setValue("prev_water", latestBill.curr_water);
                         }
                       } catch {
@@ -562,7 +570,13 @@ function Page() {
                 </Button>
               )}
 
-              <Button className="flex-1" type="submit" disabled={isSubmitting || isFieldsDisabled || isLoadingLatestBill}>
+              <Button
+                className="flex-1"
+                type="submit"
+                disabled={
+                  isSubmitting || isFieldsDisabled || isLoadingLatestBill
+                }
+              >
                 <Save />
                 {isAdding ? "Save" : "Update"}
               </Button>

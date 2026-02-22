@@ -6,8 +6,8 @@ import { DefTable } from "@/components/reusable/def-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { formatDate, handleAxiosError } from "@/lib/utils";
-import { CirclePlus, Pencil, Save, Trash2 } from "lucide-react";
+import { formatDate, getDuration, handleAxiosError } from "@/lib/utils";
+import { CirclePlus, Pencil, Save, Trash2, UserRoundPlus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ import {
 import crypto from "crypto";
 import { DefDatePicker } from "@/components/reusable/def-date-picker";
 import { DefSelect } from "@/components/reusable/def-select";
+import { Badge } from "@/components/ui/badge";
 
 function Page() {
   const {
@@ -130,7 +131,7 @@ function Page() {
           onClick={() => openAdd()}
           disabled={!renters}
         >
-          <CirclePlus className="w-4 h-4" />
+          <UserRoundPlus className="w-4 h-4" />
           Add Renter
         </Button>
       </div>
@@ -141,24 +142,29 @@ function Page() {
         {renters && (
           <DefTable
             columns={[
-              "ID",
               "House",
               "Name",
               "Pin",
               "Start Date",
               "End Date",
-              "",
+              "Duration",
+              "Actions",
             ]}
             data={renters}
             renderRow={(renter) => (
               <TableRow key={renter.id}>
-                <TableCell>{renter.id}</TableCell>
                 <TableCell>{renter.house?.name}</TableCell>
                 <TableCell>{renter.name}</TableCell>
-                <TableCell>{renter.pin_hash}</TableCell>
+                <TableCell>
+                  <Badge className="bg-muted text-black tracking-wider">
+                    {renter.pin_hash}
+                  </Badge>
+                </TableCell>
                 <TableCell>{formatDate(renter.start_date)}</TableCell>
                 <TableCell>{formatDate(renter.end_date)}</TableCell>
-
+                <TableCell>
+                  {getDuration(renter.start_date, renter.end_date)}
+                </TableCell>
                 <TableCell className="flex space-x-2 w-2">
                   <Button
                     className="cursor-pointer"
