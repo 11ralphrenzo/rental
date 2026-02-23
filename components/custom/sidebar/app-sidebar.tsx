@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HouseHeart, ReceiptText, UsersRound } from "lucide-react";
+import { HouseHeart, QrCode, ReceiptText, UsersRound } from "lucide-react";
 
 import { SideBarCalendar } from "@/components/custom/sidebar/sidebar-calendar";
 import { NavUser } from "@/components/custom/sidebar/nav-user";
@@ -83,6 +83,16 @@ export function AppRenterSidebar({
       <SidebarContent>
         <SideBarCalendar />
         <SidebarSeparator className="mx-0" />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/renter/channels">
+                <QrCode />
+                <span>Payment Channels</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         {/* <Calendars calendars={data.calendars} /> */}
         {/* <SidebarMenu>
           <SidebarMenuItem>
