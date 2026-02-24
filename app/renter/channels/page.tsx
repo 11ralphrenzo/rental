@@ -1,9 +1,11 @@
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { QrCodeIcon } from "lucide-react";
+import { InfoIcon, Mail, MessageCircleIcon, QrCodeIcon } from "lucide-react";
 import Image from "next/image";
 
 const paymentQRs = [
@@ -72,6 +74,24 @@ function Page() {
           </PopoverContent>
         </Popover>
       ))}
+      <div className="col-span-4">
+        <Alert>
+          <InfoIcon />
+          <AlertTitle>Note</AlertTitle>
+          <AlertDescription className="flex flex-col space-y-2">
+            <span>
+              Click on the QR icon above, and once you have paid, please send a
+              message or screenshot thru Messenger.
+            </span>
+            {/* <div className="space-x-2">
+              <Button className="bg-blue-500 rounded-full">
+                <MessageCircleIcon />
+                Messenger
+              </Button>
+            </div> */}
+          </AlertDescription>
+        </Alert>
+      </div>
     </div>
   );
 }
