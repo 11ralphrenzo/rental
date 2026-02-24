@@ -12,6 +12,7 @@ import { NavUser } from "@/components/custom/sidebar/nav-user";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -60,18 +61,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      {/* <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <Link href={"/admin/bills?new=true"}>
-              <SidebarMenuButton>
-                <PlusCircle />
-                <span>New Bill</span>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <p className="text-xs text-muted-foreground">
+          Version {process.env.NEXT_PUBLIC_APP_VERSION}
+        </p>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
@@ -135,18 +129,11 @@ export function AppRenterSidebar({
           </SidebarMenuItem>
         </SidebarMenu> */}
       </SidebarContent>
-      {/* <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <Link href={"/admin/bills?new=true"}>
-              <SidebarMenuButton>
-                <PlusCircle />
-                <span>New Bill</span>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <p className="text-xs text-muted-foreground">
+          Version {process.env.NEXT_PUBLIC_APP_VERSION}
+        </p>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
