@@ -102,7 +102,7 @@ export function AppRenterSidebar({
             <SidebarMenuButton asChild>
               <Link href="/renter/channels">
                 <QrCode />
-                <span>Payment Channels</span>
+                <span>QR Payments</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
