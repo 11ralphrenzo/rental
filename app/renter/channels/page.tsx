@@ -36,9 +36,9 @@ const paymentQRs = [
   {
     id: 4,
     channel: "GoTyme",
-    bgColor: "bg-blue-400",
-    textColor: "text-blue-400",
-    borderColor: "border-blue-400",
+    bgColor: "bg-cyan-400",
+    textColor: "text-cyan-400",
+    borderColor: "border-cyan-400",
     link: "https://drive.usercontent.google.com/download?id=13CG7vfTjI96GFOjTGb4L9sK4KBE8Y914&export=view&authuser=0",
   },
 ];
@@ -62,7 +62,7 @@ function Page() {
               </span>
             </div>
           </PopoverTrigger>
-          <PopoverContent side="bottom">
+          <PopoverContent side="bottom" className={`${qr.bgColor}`}>
             <Image
               src={qr.link}
               alt={qr.channel}
