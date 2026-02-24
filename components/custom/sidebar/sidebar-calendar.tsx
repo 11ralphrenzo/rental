@@ -108,7 +108,6 @@ export function SideBarCalendar() {
         </SidebarGroupContent>
       </SidebarGroup>
 
-      {/* RENTER VIEW: Fancy remaining days UI or empty */}
       {isRenter &&
         !loading &&
         (renterRemainingDays ? (

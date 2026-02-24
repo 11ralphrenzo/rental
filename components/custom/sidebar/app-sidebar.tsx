@@ -1,5 +1,11 @@
 import * as React from "react";
-import { HouseHeart, QrCode, ReceiptText, UsersRound } from "lucide-react";
+import {
+  HouseHeart,
+  LayoutGrid,
+  QrCode,
+  ReceiptText,
+  UsersRound,
+} from "lucide-react";
 
 import { SideBarCalendar } from "@/components/custom/sidebar/sidebar-calendar";
 import { NavUser } from "@/components/custom/sidebar/nav-user";
@@ -84,6 +90,14 @@ export function AppRenterSidebar({
         <SideBarCalendar />
         <SidebarSeparator className="mx-0" />
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/renter/dashboard">
+                <LayoutGrid />
+                <span>Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link href="/renter/channels">
