@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from("bills")
-    .select("*, renters(id, name, houses(id, name, monthly, elect_rate, water_rate, billing_day))")
+    .select("*, renters(id, name, billing_day, properties(id, name, monthly))")
     .order("month", { ascending: false });
 
   if (renterId) {

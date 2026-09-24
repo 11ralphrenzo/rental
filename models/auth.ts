@@ -5,17 +5,17 @@ export type AuthRequest = {
 };
 
 export type AuthResponse = {
-  id?: number;
+  id?: string;
   username?: string;
   type?: number;
   message: string;
 };
 
 export type AuthUser = {
-  id: number;
+  id: string;
   userName?: string;
   name: string;
   type?: string | undefined;
-  houseId?: number;
+  propertyId?: string;
   accessToken: string;
 };

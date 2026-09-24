@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET() {
   const { data, error } = await supabase
     .from("renters")
-    .select("*, houses(id, name, monthly, elect_rate, water_rate, billing_day)")
+    .select("*, properties(id, name, monthly)")
     .order("name", { ascending: true });
   if (error)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -17,16 +17,17 @@ export async function POST(req: NextRequest) {
     const {
       id,
       name,
-      houseId,
+      propertyId,
       pin_hash,
       active,
       start_date,
       end_date,
+      billing_day,
     }: Renter = await req.json();
 
     const { data, error } = await supabase
       .from("renters")
-      .insert({ id, name, houseId, pin_hash, active, start_date, end_date })
+      .insert({ id, name, propertyId, pin_hash, active, start_date, end_date, billing_day })
       .select()
       .single();
 
@@ -51,16 +52,17 @@ export async function PUT(req: NextRequest) {
     const {
       id,
       name,
-      houseId,
+      propertyId,
       pin_hash,
       active,
       start_date,
       end_date,
+      billing_day,
     }: Renter = await req.json();
 
     const { data, error } = await supabase
       .from("renters")
-      .update({ name, houseId, pin_hash, active, start_date, end_date })
+      .update({ name, propertyId, pin_hash, active, start_date, end_date, billing_day })
       .eq("id", id)
       .select()
       .single();
@@ -84,10 +86,11 @@ export async function PUT(req: NextRequest) {
 const formatResponse = (renter: Renter) => ({
   id: renter.id,
   name: renter.name,
-  houseId: renter.houseId,
-  house: renter.houses,
+  propertyId: renter.propertyId,
+  property: renter.properties,
   pin_hash: renter.pin_hash,
   start_date: renter.start_date,
   end_date: renter.end_date,
   active: renter.active,
+  billing_day: renter.billing_day,
 });

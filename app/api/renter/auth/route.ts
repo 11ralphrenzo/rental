@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message:
-            "There was an error with your house/pin combination. Please try again.",
+            "There was an error with your property/pin combination. Please try again.",
         },
         { status: 400 },
       );
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       {
         id: data.id,
         name: data.name,
-        houseId: data.houseId,
+        propertyId: data.propertyId,
       },
       process.env.JWT_SECRET as string,
       { expiresIn: "365d" },
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       id: data.id,
       name: data.name,
-      houseId: data.houseId,
+      propertyId: data.propertyId,
       accessToken,
     });
   } catch (err) {

@@ -28,7 +28,7 @@ function AdminLoginForm() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/admin/houses");
+      router.replace("/admin/properties");
     }
   }, [isAuthenticated, router]);
 
@@ -61,7 +61,7 @@ function AdminLoginForm() {
       reset();
       login(result.data.accessToken, result.data);
       toast.success("Welcome back!");
-      router.replace("/admin/houses");
+      router.replace("/admin/properties");
     } catch (err) {
       toast.dismiss();
       reset({ password: "" }); // Only reset password on failure

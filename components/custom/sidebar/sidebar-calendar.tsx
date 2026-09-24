@@ -7,9 +7,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { House } from "@/models/house";
+import { Renter } from "@/models/renter";
 import { useEffect, useState, useMemo } from "react";
-import { GetAllHouses } from "@/services/house-service";
+import { GetAllRenters } from "@/services/renter-service";
 import { Clock, CalendarClock, AlertCircle, Receipt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/AuthContext";
@@ -18,26 +18,26 @@ import NoData from "@/components/custom/no-data";
 
 export function SideBarCalendar() {
   const { user } = useAuth();
-  const isRenter = !!user?.houseId;
+  const isRenter = !!user?.propertyId;
 
-  const [houses, setHouses] = useState<House[]>([]);
+  const [renters, setRenters] = useState<Renter[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch houses data
+  // Fetch renters data
   useEffect(() => {
-    async function fetchHouses() {
+    async function fetchRenters() {
       try {
-        const response = await GetAllHouses();
+        const response = await GetAllRenters();
         if (response?.data) {
-          setHouses(response.data);
+          setRenters(response.data);
         }
       } catch (error) {
-        console.error("Failed to fetch houses for calendar", error);
+        console.error("Failed to fetch renters for calendar", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchHouses();
+    fetchRenters();
   }, []);
 
   // Compute billing dates and remaining days
@@ -46,20 +46,20 @@ export function SideBarCalendar() {
     today.setHours(0, 0, 0, 0);
 
     const calcDates: Date[] = [];
-    const calcList: { house: House; days: number; date: Date }[] = [];
+    const calcList: { renter: Renter; days: number; date: Date }[] = [];
 
-    // Filter houses if the user is a renter (only show their own house)
-    const activeHouses = isRenter
-      ? houses.filter((h) => h.id === user.houseId)
-      : houses;
+    // Filter renters if the user is a renter (only show their own property/renter info)
+    const activeRenters = isRenter
+      ? renters.filter((r) => r.propertyId === user.propertyId)
+      : renters;
 
-    activeHouses.forEach((house) => {
-      if (typeof house.billing_day === "number") {
+    activeRenters.forEach((renter) => {
+      if (typeof renter.billing_day === "number") {
         // Find the next billing date
         let nextBillingDate = new Date(
           today.getFullYear(),
           today.getMonth(),
-          house.billing_day,
+          renter.billing_day,
         );
 
         // If the billing day has already passed this month, the next one is next month
@@ -67,7 +67,7 @@ export function SideBarCalendar() {
           nextBillingDate = new Date(
             today.getFullYear(),
             today.getMonth() + 1,
-            house.billing_day,
+            renter.billing_day,
           );
         }
 
@@ -77,7 +77,7 @@ export function SideBarCalendar() {
         const diffTime = nextBillingDate.getTime() - today.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        calcList.push({ house, days: diffDays, date: nextBillingDate });
+        calcList.push({ renter, days: diffDays, date: nextBillingDate });
       }
     });
 
@@ -92,7 +92,7 @@ export function SideBarCalendar() {
       remainingList: calcList,
       renterRemainingDays,
     };
-  }, [houses, isRenter, user?.houseId]);
+  }, [renters, isRenter, user?.propertyId]);
 
   return (
     <>
@@ -175,10 +175,10 @@ export function SideBarCalendar() {
           <SidebarGroupContent>
             {remainingList.length > 0 ? (
               <SidebarMenu>
-                {remainingList.map(({ house, days }) => (
-                  <SidebarMenuItem key={house.id}>
+                {remainingList.map(({ renter, days }) => (
+                  <SidebarMenuItem key={renter.id}>
                     <SidebarMenuButton className="flex items-center justify-between text-xs cursor-default hover:bg-transparent hover:text-sidebar-foreground">
-                      <span className="truncate flex-1">{house.name}</span>
+                      <span className="truncate flex-1">{renter.name}</span>
                       <Badge
                         variant={days <= 3 ? "destructive" : "secondary"}
                         className="bg-primary/10 ml-auto text-[10px] px-1.5 py-2 h-4 min-w-[50px] flex items-center justify-center gap-1"
@@ -194,7 +194,7 @@ export function SideBarCalendar() {
               <NoData
                 icon={Receipt}
                 title="No upcoming bills"
-                description="Billing dates will appear when houses are configured."
+                description="Billing dates will appear when properties are configured."
                 className="py-6 px-4 min-h-[120px]"
               />
             )}

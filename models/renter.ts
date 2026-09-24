@@ -1,16 +1,17 @@
-import { House } from "./house";
+import { Property } from "./property";
 
 export type Renter = {
-  id: number;
+  id: string;
   name: string;
-  houseId: number;
-  house?: House;
+  propertyId: string;
+  property?: Property;
   createdAt: Date;
   pin_hash: string;
   active: boolean;
   start_date: Date;
   end_date?: Date;
+  billing_day?: number;
 
   // For Supabase Purpose
-  houses?: House;
+  properties?: Property;
 };

@@ -83,10 +83,10 @@ async function buildBillPdf(bill: Bill): Promise<jsPDF> {
   doc.text(bill.renter?.name ?? "—", 44, startY);
 
   doc.setFont("helvetica", "bold");
-  doc.text("Unit/House:", 14, startY + 8);
+  doc.text("Unit/Property:", 14, startY + 8);
   doc.setFont("helvetica", "normal");
   doc.text(
-    bill.renter?.houses?.name ?? bill.renter?.house?.name ?? "—",
+    bill.renter?.properties?.name ?? bill.renter?.property?.name ?? "—",
     44,
     startY + 8,
   );

@@ -6,7 +6,7 @@ import { DefTable } from "@/components/reusable/def-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { formatDate, getDuration, handleAxiosError } from "@/lib/utils";
+import { formatDate, getDuration, handleAxiosError, toOrdinal } from "@/lib/utils";
 import { CirclePlus, Pencil, Save, Trash2, UserRoundPlus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -41,7 +41,7 @@ function Page() {
   const [toDelete, setToDelete] = useState<Renter | null>(null);
 
   const {
-    houses,
+    properties,
     selectedRenter,
     setSelectedRenter,
     isAdding,
@@ -142,9 +142,10 @@ function Page() {
         {renters && (
           <DefTable
             columns={[
-              "House",
+              "Property",
               "Name",
               "Pin",
+              "Billing Day",
               "Start Date",
               "End Date",
               "Duration",
@@ -153,13 +154,14 @@ function Page() {
             data={renters}
             renderRow={(renter) => (
               <TableRow key={renter.id}>
-                <TableCell>{renter.house?.name}</TableCell>
+                <TableCell>{renter.property?.name}</TableCell>
                 <TableCell>{renter.name}</TableCell>
                 <TableCell>
                   <Badge className="bg-muted text-black tracking-wider">
                     {renter.pin_hash}
                   </Badge>
                 </TableCell>
+                <TableCell>{toOrdinal(renter.billing_day || 0)}</TableCell>
                 <TableCell>{formatDate(renter.start_date)}</TableCell>
                 <TableCell>{formatDate(renter.end_date)}</TableCell>
                 <TableCell>
@@ -216,24 +218,24 @@ function Page() {
             )}
 
             <Controller
-              name="houseId"
+              name="propertyId"
               control={control}
-              rules={{ required: "House is required." }}
+              rules={{ required: "Property is required." }}
               render={({ field }) => (
                 <DefSelect
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Select House"
-                  options={houses?.map((house) => ({
-                    value: house.id,
-                    label: house.name,
+                  placeholder="Select Property"
+                  options={properties?.map((property) => ({
+                    value: property.id,
+                    label: property.name,
                   }))}
                 />
               )}
             />
-            {errors.houseId && (
+            {errors.propertyId && (
               <span className="text-sm text-red-500">
-                {errors.houseId.message}
+                {errors.propertyId.message}
               </span>
             )}
 
@@ -244,6 +246,19 @@ function Page() {
             {errors.pin_hash && (
               <span className="text-sm text-red-500">
                 {errors.pin_hash.message}
+              </span>
+            )}
+
+            <Input
+              type="number"
+              placeholder="Billing Day (1-31)"
+              min={1}
+              max={31}
+              {...register("billing_day", { required: "Billing Day is required." })}
+            />
+            {errors.billing_day && (
+              <span className="text-sm text-red-500">
+                {errors.billing_day.message}
               </span>
             )}
 

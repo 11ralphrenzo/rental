@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const { id: renterId } = tokenData;
   const { data, error } = await supabase
     .from("bills")
-    .select("*, renters(name, houses(name))")
+    .select("*, renters(name, properties(name))")
     .eq("renterId", renterId)
     .order("month", { ascending: false });
 

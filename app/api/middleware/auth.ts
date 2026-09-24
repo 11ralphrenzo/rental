@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 interface DecodedToken {
   id: string;
   name: string;
-  houseId: string;
+  propertyId: string;
 }
 
 export function verifyToken(request: NextRequest): DecodedToken | null {

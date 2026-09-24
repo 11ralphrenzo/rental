@@ -53,7 +53,7 @@ function Page() {
       }
     } catch (err) {
       toast.dismiss();
-      handleAxiosError(err, "Login failed. Please check your House and Pin.");
+      handleAxiosError(err, "Login failed. Please check your Property and Pin.");
     }
   };
 

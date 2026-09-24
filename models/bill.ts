@@ -2,8 +2,8 @@ import { BillStatus } from "@/lib/enum";
 import { Renter } from "./renter";
 
 export type Bill = {
-  id: number;
-  renterId: number;
+  id: string;
+  renterId: string;
   renter?: Renter;
   month: Date;
   rent: number;

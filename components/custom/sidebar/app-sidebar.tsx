@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-  HouseHeart,
+  Home,
   LayoutGrid,
   QrCode,
   ReceiptText,
@@ -45,9 +45,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/admin/houses">
-                <HouseHeart />
-                <span>Houses</span>
+              <Link href="/admin/properties">
+                <Home />
+                <span>Properties</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -113,9 +113,9 @@ export function AppRenterSidebar({
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/admin/houses">
-                <HouseHeart />
-                <span>Houses</span>
+              <Link href="/admin/properties">
+                <Home />
+                <span>Properties</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -1,16 +1,16 @@
-import { GetAllHouses } from "@/services/house-service";
+import { GetAllProperties } from "@/services/property-service";
 import { handleAxiosError } from "@/lib/utils";
-import { House } from "@/models/house";
+import { Property } from "@/models/property";
 import { Renter } from "@/models/renter";
 import { useCallback, useState } from "react";
 
 const useRenterModal = () => {
   const [selectedRenter, setSelectedRenter] = useState<Renter | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [houses, setHouses] = useState<House[] | undefined>(undefined);
+  const [properties, setProperties] = useState<Property[] | undefined>(undefined);
 
   const openAdd = () => setIsAdding(true);
-  const openEdit = (house: Renter) => setSelectedRenter(house);
+  const openEdit = (property: Renter) => setSelectedRenter(property);
   const close = () => {
     setSelectedRenter(null);
     setIsAdding(false);
@@ -18,19 +18,19 @@ const useRenterModal = () => {
 
   const getResources = useCallback(async () => {
     try {
-      const response = await GetAllHouses();
+      const response = await GetAllProperties();
       if (response) {
-        setHouses(response.data);
+        setProperties(response.data);
       }
     } catch (error) {
-      handleAxiosError(error, "Failed to load houses.");
+      handleAxiosError(error, "Failed to load properties.");
     }
   }, []);
 
   return {
     selectedRenter,
     isAdding,
-    houses,
+    properties,
     setSelectedRenter,
     setIsAdding,
     openAdd,

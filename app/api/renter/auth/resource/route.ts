@@ -1,10 +1,10 @@
 import { supabase } from "@/lib/supabaseClient";
-import { House } from "@/models/house";
+import { Property } from "@/models/property";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   const { data, error } = await supabase
-    .from("houses")
+    .from("properties")
     .select("*")
     .order("name", { ascending: true });
   if (error)
@@ -12,7 +12,7 @@ export async function GET() {
   return NextResponse.json(data.map(formatResponse));
 }
 
-const formatResponse = (house: House) => ({
-  id: house.id,
-  name: house.name,
+const formatResponse = (property: Property) => ({
+  id: property.id,
+  name: property.name,
 });

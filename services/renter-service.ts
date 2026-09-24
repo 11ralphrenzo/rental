@@ -7,5 +7,5 @@ export const SaveRenter = (data: Renter) => api.post<Renter>("/renters", data);
 
 export const UpdateRenter = (data: Renter) => api.put<Renter>("/renters", data);
 
-export const DeleteRenter = (id: number) =>
+export const DeleteRenter = (id: string) =>
   api.delete<boolean>(`/renters/${id}`);

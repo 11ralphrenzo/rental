@@ -10,7 +10,7 @@ const useBillModal = () => {
   const [renters, setRenters] = useState<Renter[] | undefined>(undefined);
 
   const openAdd = () => setIsAdding(true);
-  const openEdit = (house: Bill) => setSelectedBill(house);
+  const openEdit = (property: Bill) => setSelectedBill(property);
   const close = () => {
     setSelectedBill(null);
     setIsAdding(false);
@@ -23,7 +23,7 @@ const useBillModal = () => {
         setRenters(response.data);
       }
     } catch (error) {
-      handleAxiosError(error, "Failed to load houses.");
+      handleAxiosError(error, "Failed to load properties.");
     }
   }, []);
 

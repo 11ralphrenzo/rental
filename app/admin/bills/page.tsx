@@ -321,18 +321,14 @@ function Page() {
                     onChange={async (e) => {
                       field.onChange(e);
 
-                      const renter = renters?.find((r) => r.id === Number(e));
-                      if (renter && renter.house) {
-                        if (renter.house.monthly)
-                          setValue("rent", renter.house.monthly);
-                        if (renter.house.elect_rate)
-                          setValue("rate_electricity", renter.house.elect_rate);
-                        if (renter.house.water_rate)
-                          setValue("rate_water", renter.house.water_rate);
+                      const renter = renters?.find((r) => r.id === String(e));
+                      if (renter && renter.property) {
+                        if (renter.property.monthly)
+                          setValue("rent", renter.property.monthly);
 
-                        if (renter.house.billing_day) {
+                        if (renter.billing_day) {
                           const d = new Date();
-                          d.setDate(renter.house.billing_day);
+                          d.setDate(renter.billing_day);
                           setValue("month", d);
                         }
                       }
@@ -341,7 +337,7 @@ function Page() {
                         setIsLoadingLatestBill(true);
                         try {
                           const latestBill = await GetLatestBillByRenter(
-                            Number(e),
+                            String(e),
                           );
                           if (latestBill) {
                             setValue(
