@@ -31,7 +31,7 @@ function CustomBill({ bill }: CustomBillProps) {
           ? "ring-1 ring-primary/20 shadow-md"
           : "hover:shadow-md hover:border-border/80",
       )}
-      key={bill.id}
+      key={(bill as any).id}
       open={isOpen}
       onOpenChange={setIsOpen}
     >
@@ -43,10 +43,10 @@ function CustomBill({ bill }: CustomBillProps) {
         <div className="flex items-center gap-4 flex-1">
           <div className="flex flex-col items-center justify-center bg-primary/10 text-primary rounded-lg px-3 py-1.5 min-w-[3.5rem]">
             <span className="text-sm font-bold leading-none">
-              {formatDate(bill.month, "MMM").toUpperCase()}
+              {formatDate((bill as any).month, "MMM").toUpperCase()}
             </span>
             <span className="text-[10px] font-medium mt-1 opacity-80">
-              {formatDate(bill.month, "yyyy")}
+              {formatDate((bill as any).month, "yyyy")}
             </span>
           </div>
 
@@ -61,7 +61,7 @@ function CustomBill({ bill }: CustomBillProps) {
                 isOpen ? "text-primary" : "text-foreground",
               )}
             >
-              {formatCurrency(bill.total)}
+              {formatCurrency((bill as any).total)}
             </span>
           </div>
         </div>
@@ -69,14 +69,14 @@ function CustomBill({ bill }: CustomBillProps) {
         {/* Right Side: Caret */}
         <div className="flex items-center pl-4 bg-transparent border-none">
           {!isOpen &&
-            (bill.status === BillStatus.PENDING ||
-              bill.status === BillStatus.PARTIAL ||
-              bill.status === BillStatus.OVERDUE) && (
+            ((bill as any).status === BillStatus.PENDING ||
+              (bill as any).status === BillStatus.PARTIAL ||
+              (bill as any).status === BillStatus.OVERDUE) && (
               <Badge
                 variant="outline"
-                className={`h-4 text-[9px] ${billStatusStyle[bill.status]}`}
+                className={`h-4 text-[9px] ${billStatusStyle[(bill as any).status as BillStatus]}`}
               >
-                {bill.status}
+                {(bill as any).status}
               </Badge>
             )}
           <Button
@@ -108,21 +108,21 @@ function CustomBill({ bill }: CustomBillProps) {
             <div className="grid grid-cols-2 gap-y-1.5 text-xs">
               <span className="text-muted-foreground">Current Read:</span>
               <span className="text-right font-medium">
-                {bill.curr_electricity}
+                {(bill as any).curr_electricity}
               </span>
               <span className="text-muted-foreground">Previous Read:</span>
               <span className="text-right font-medium">
-                {bill.prev_electricity}
+                {(bill as any).prev_electricity}
               </span>
               <span className="text-muted-foreground">Consumed:</span>
               <span className="text-right font-medium">
-                {Number(bill.curr_electricity - bill.prev_electricity).toFixed(
+                {Number((bill as any).curr_electricity - (bill as any).prev_electricity).toFixed(
                   2,
                 )}
               </span>
               <span className="text-muted-foreground">Rate:</span>
               <span className="text-right font-medium">
-                {formatCurrency(bill.rate_electricity)}
+                {formatCurrency((bill as any).rate_electricity)}
               </span>
             </div>
             <div className="mt-auto pt-2 mt-2 border-t border-border/50 flex justify-between items-center h-7">
@@ -130,7 +130,7 @@ function CustomBill({ bill }: CustomBillProps) {
                 Total:
               </span>
               <span className="text-sm font-bold">
-                {formatCurrency(bill.total_electricity)}
+                {formatCurrency((bill as any).total_electricity)}
               </span>
             </div>
           </div>
@@ -145,16 +145,16 @@ function CustomBill({ bill }: CustomBillProps) {
             </div>
             <div className="grid grid-cols-2 gap-y-1.5 text-xs">
               <span className="text-muted-foreground">Current Read:</span>
-              <span className="text-right font-medium">{bill.curr_water}</span>
+              <span className="text-right font-medium">{(bill as any).curr_water}</span>
               <span className="text-muted-foreground">Previous Read:</span>
-              <span className="text-right font-medium">{bill.prev_water}</span>
+              <span className="text-right font-medium">{(bill as any).prev_water}</span>
               <span className="text-muted-foreground">Consumed:</span>
               <span className="text-right font-medium">
-                {Number(bill.curr_water - bill.prev_water).toFixed(2)}
+                {Number((bill as any).curr_water - (bill as any).prev_water).toFixed(2)}
               </span>
               <span className="text-muted-foreground">Rate:</span>
               <span className="text-right font-medium">
-                {formatCurrency(bill.rate_water)}
+                {formatCurrency((bill as any).rate_water)}
               </span>
             </div>
             <div className="mt-auto pt-2 mt-2 border-t border-border/50 flex justify-between items-center h-7">
@@ -162,7 +162,7 @@ function CustomBill({ bill }: CustomBillProps) {
                 Total:
               </span>
               <span className="text-sm font-bold">
-                {formatCurrency(bill.total_water)}
+                {formatCurrency((bill as any).total_water)}
               </span>
             </div>
           </div>
@@ -178,30 +178,30 @@ function CustomBill({ bill }: CustomBillProps) {
               </span>
               <Badge
                 variant="outline"
-                className={`h-4 text-[9px] ${billStatusStyle[bill.status]}`}
+                className={`h-4 text-[9px] ${billStatusStyle[(bill as any).status as BillStatus]}`}
               >
-                {bill.status}
+                {(bill as any).status}
               </Badge>
             </div>
             <div className="grid grid-cols-2 gap-y-2 text-sm">
               <span className="text-muted-foreground">Base Rent:</span>
               <span className="text-right font-medium">
-                {formatCurrency(bill.rent)}
+                {formatCurrency((bill as any).rent)}
               </span>
 
               <span className="text-muted-foreground">Electricity:</span>
               <span className="text-right font-medium">
-                {formatCurrency(bill.total_electricity)}
+                {formatCurrency((bill as any).total_electricity)}
               </span>
 
               <span className="text-muted-foreground">Water:</span>
               <span className="text-right font-medium">
-                {formatCurrency(bill.total_water)}
+                {formatCurrency((bill as any).total_water)}
               </span>
 
               <span className="text-muted-foreground">Other Charges:</span>
               <span className="text-right font-medium">
-                {formatCurrency(bill.others)}
+                {formatCurrency((bill as any).others)}
               </span>
             </div>
             <div className="mt-3 pt-3 border-t border-primary/20 flex justify-between items-center">
@@ -209,7 +209,7 @@ function CustomBill({ bill }: CustomBillProps) {
                 Total Amount
               </span>
               <span className="text-lg font-black text-primary tabular-nums tracking-tight">
-                {formatCurrency(bill.total)}
+                {formatCurrency((bill as any).total)}
               </span>
             </div>
           </div>

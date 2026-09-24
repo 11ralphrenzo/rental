@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     
     await newDoc.set(billData);
 
-    const data = { ...billData } as Bill;
+    const data = { ...billData } as unknown as Bill;
     if (renterId) {
        const renterDoc = await db.collection("renters").doc(renterId).get();
        if (renterDoc.exists) {

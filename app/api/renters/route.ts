@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     
     await newDoc.set(renterData);
 
-    const data = { ...renterData } as Renter;
+    const data = { ...renterData } as unknown as Renter;
     if (propertyId) {
        const propDoc = await db.collection("properties").doc(propertyId).get();
        if (propDoc.exists) data.property = { id: propDoc.id, ...propDoc.data() } as Property;

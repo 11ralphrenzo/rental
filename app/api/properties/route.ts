@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     
     await newDoc.set(propertyData);
 
-    return NextResponse.json(formatResponse(propertyData as Property));
+    return NextResponse.json(formatResponse(propertyData as unknown as Property));
   } catch (err: any) {
     return NextResponse.json(
       { message: "Something went wrong." + err },

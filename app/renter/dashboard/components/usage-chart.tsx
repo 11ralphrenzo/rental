@@ -28,16 +28,16 @@ function UsageChart({
   // Transform bills data for chart
   const chartData =
     bills?.map((bill) => ({
-      month: new Date(bill.month).toLocaleDateString("en-US", {
+      month: new Date((bill as any).month).toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
       }),
       data: formatToTwoDecimals(
         type === "electricity"
-          ? bill.curr_electricity - bill.prev_electricity
-          : bill.curr_water - bill.prev_water,
+          ? (bill as any).curr_electricity - (bill as any).prev_electricity
+          : (bill as any).curr_water - (bill as any).prev_water,
       ),
-      //   water: formatToTwoDecimals(bill.curr_water - bill.prev_water),
+      //   water: formatToTwoDecimals((bill as any).curr_water - (bill as any).prev_water),
     })) || [];
 
   const isEmpty = chartData.length === 0;

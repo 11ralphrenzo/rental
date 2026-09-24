@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     
     await newDoc.set(utilityData);
 
-    return NextResponse.json(formatResponse(utilityData as Utility));
+    return NextResponse.json(formatResponse(utilityData as unknown as Utility));
   } catch (err: any) {
     return NextResponse.json(
       { message: "Something went wrong." + err },

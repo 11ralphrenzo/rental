@@ -24,7 +24,7 @@ function RenterBills({ className, bills }: RenterBillsProps) {
       <LoadingView isLoading={bills === undefined}>
         <div className="flex flex-col space-y-3">
           {bills && bills.length > 0 ? (
-            bills.map((bill) => <CustomBill key={bill.id} bill={bill} />)
+            bills.map((bill) => <CustomBill key={(bill as any).id} bill={bill} />)
           ) : (
             <NoData
               icon={Receipt}

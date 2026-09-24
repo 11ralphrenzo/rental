@@ -34,8 +34,8 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
     })
     .sort((a, b) => new Date(b.month).getTime() - new Date(a.month).getTime());
 
-  const unpaidBills = bills.filter(b => b.status !== "PAID") as unknown as Bill[];
-  const paidBills = bills.filter(b => b.status === "PAID") as unknown as Bill[];
+  const unpaidBills = (bills as any[]).filter(b => b.status !== "PAID") as unknown as Bill[];
+  const paidBills = (bills as any[]).filter(b => b.status === "PAID") as unknown as Bill[];
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
