@@ -431,8 +431,8 @@ export default function Page() {
                       <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold block mb-0.5">Total Amount</span>
                       <span className="text-[13px] font-black text-zinc-900">{formatCurrency(bill.total)}</span>
                     </div>
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${bill.status === BillStatus.PAID ? 'bg-emerald-100/80 text-emerald-800 border-emerald-200/50' : bill.status === BillStatus.UNPAID ? 'bg-red-100/80 text-red-800 border-red-200/50' : 'bg-amber-100/80 text-amber-800 border-amber-200/50'} text-[9px] uppercase tracking-wider font-bold rounded-full border`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${bill.status === BillStatus.PAID ? 'bg-emerald-500' : bill.status === BillStatus.UNPAID ? 'bg-red-500' : 'bg-amber-500'}`} />
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${bill.status === BillStatus.PAID ? 'bg-emerald-100/80 text-emerald-800 border-emerald-200/50' : bill.status === BillStatus.OVERDUE ? 'bg-red-100/80 text-red-800 border-red-200/50' : 'bg-amber-100/80 text-amber-800 border-amber-200/50'} text-[9px] uppercase tracking-wider font-bold rounded-full border`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${bill.status === BillStatus.PAID ? 'bg-emerald-500' : bill.status === BillStatus.OVERDUE ? 'bg-red-500' : 'bg-amber-500'}`} />
                       {bill.status}
                     </span>
                   </div>
