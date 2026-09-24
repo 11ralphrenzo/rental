@@ -86,7 +86,7 @@ async function buildBillPdf(bill: Bill): Promise<jsPDF> {
   doc.text("Unit/Property:", 14, startY + 8);
   doc.setFont("helvetica", "normal");
   doc.text(
-    bill.renter?.properties?.name ?? bill.renter?.property?.name ?? "—",
+    bill.renter?.property?.name ?? "—",
     44,
     startY + 8,
   );
@@ -98,26 +98,32 @@ async function buildBillPdf(bill: Bill): Promise<jsPDF> {
 
   // ─── Bill Breakdown Table ──────────────────────────────────────────
   const tableWidth = pageWidth - 28; // 14 margin on each side
+  
+  const body = [];
+  body.push(["Monthly Rent", "-", "-", pdfCurrency(bill.rent)]);
+  
+  if (bill.utilities && bill.utilities.length > 0) {
+    bill.utilities.forEach((u) => {
+      body.push([
+        `${u.name} ${u.unit ? `(${u.unit})` : ''}`,
+        new Intl.NumberFormat("en-US").format(u.prev ?? 0),
+        new Intl.NumberFormat("en-US").format(u.curr ?? 0),
+        pdfCurrency(u.total),
+      ]);
+    });
+  }
+
+  if (bill.customCharges && bill.customCharges.length > 0) {
+    bill.customCharges.forEach((c) => {
+      body.push([c.name, "-", "-", pdfCurrency(c.amount)]);
+    });
+  }
+
   autoTable(doc, {
     startY: startY + 26,
     tableWidth: tableWidth,
     head: [["Item Description", "Previous", "Current", "Amount"]],
-    body: [
-      ["Monthly Rent", "-", "-", pdfCurrency(bill.rent)],
-      [
-        "Electricity (kW)",
-        new Intl.NumberFormat("en-US").format(bill.prev_electricity ?? 0),
-        new Intl.NumberFormat("en-US").format(bill.curr_electricity ?? 0),
-        pdfCurrency(bill.total_electricity),
-      ],
-      [
-        "Water (m3)",
-        new Intl.NumberFormat("en-US").format(bill.prev_water ?? 0),
-        new Intl.NumberFormat("en-US").format(bill.curr_water ?? 0),
-        pdfCurrency(bill.total_water),
-      ],
-      ["Other Charges", "-", "-", pdfCurrency(bill.others ?? 0)],
-    ],
+    body: body,
     foot: [["TOTAL", "", "", pdfCurrency(bill.total)]],
     theme: "striped",
     headStyles: {

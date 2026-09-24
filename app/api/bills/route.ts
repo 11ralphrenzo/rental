@@ -1,78 +1,104 @@
-import { supabase } from "@/lib/supabaseClient";
+import { db } from "@/lib/firebaseAdmin";
 import { Bill } from "@/models/bill";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "../middleware/auth";
+import { Renter } from "@/models/renter";
+import { Property } from "@/models/property";
 
 export async function GET(request: NextRequest) {
+  const tokenData = verifyToken(request);
+
+  if (!tokenData) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const renterId = searchParams.get("renterId");
 
-  let query = supabase
-    .from("bills")
-    .select("*, renters(id, name, billing_day, properties(id, name, monthly))")
-    .order("month", { ascending: false });
+  try {
+    let query: FirebaseFirestore.Query = db.collection("bills").orderBy("month", "desc");
+    
+    if (renterId) {
+      query = query.where("renterId", "==", renterId);
+    }
 
-  if (renterId) {
-    query = query.eq("renterId", Number(renterId));
-  }
+    const snapshot = await query.get();
+    
+    // Fetch all renters and properties to map them
+    const rentersSnapshot = await db.collection("renters").get();
+    const propertiesSnapshot = await db.collection("properties").get();
+    
+    const propertiesMap = new Map<string, Property>();
+    propertiesSnapshot.docs.forEach(doc => {
+      propertiesMap.set(doc.id, { id: doc.id, ...doc.data() } as Property);
+    });
 
-  const { data, error } = await query;
+    const rentersMap = new Map<string, Renter>();
+    rentersSnapshot.docs.forEach(doc => {
+      const renterData = { id: doc.id, ...doc.data() } as Renter;
+      renterData.property = propertiesMap.get(renterData.propertyId);
+      rentersMap.set(doc.id, renterData);
+    });
 
-  if (error)
+    const data = snapshot.docs.map((doc) => {
+      const billData = { id: doc.id, ...doc.data() } as Bill;
+      billData.renter = rentersMap.get(billData.renterId);
+      return billData;
+    });
+
+    return NextResponse.json(data.map(formatResponse));
+  } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data.map(formatResponse));
+  }
 }
 
 export async function POST(req: NextRequest) {
   try {
+    const body: Bill = await req.json();
     const {
-      id,
       renterId,
       month,
       rent,
-      rate_electricity,
-      prev_electricity,
-      curr_electricity,
-      total_electricity,
-      rate_water,
-      prev_water,
-      curr_water,
-      total_water,
-      others,
+      utilities,
+      customCharges,
       total,
       status,
-    }: Bill = await req.json();
+    } = body;
 
-    const { data, error } = await supabase
-      .from("bills")
-      .insert({
+    const newDoc = db.collection("bills").doc();
+    const id = newDoc.id;
+    const billData = Object.fromEntries(
+      Object.entries({
         id,
         renterId,
         month,
         rent,
-        rate_electricity,
-        prev_electricity,
-        curr_electricity,
-        total_electricity,
-        rate_water,
-        prev_water,
-        curr_water,
-        total_water,
-        others,
+        utilities: utilities || [],
+        customCharges: customCharges || [],
         total,
         status,
-      })
-      .select()
-      .single();
+        createdAt: new Date()
+      }).filter(([_, v]) => v !== undefined && v !== null && (typeof v !== 'number' || !Number.isNaN(v)))
+    );
+    
+    await newDoc.set(billData);
 
-    if (error || !data) {
-      return NextResponse.json(
-        { message: error?.message || "Database operation failed." },
-        { status: 400 },
-      );
+    const data = { ...billData } as Bill;
+    if (renterId) {
+       const renterDoc = await db.collection("renters").doc(renterId).get();
+       if (renterDoc.exists) {
+          data.renter = { id: renterDoc.id, ...renterDoc.data() } as Renter;
+          if (data.renter.propertyId) {
+             const propDoc = await db.collection("properties").doc(data.renter.propertyId).get();
+             if (propDoc.exists) {
+                data.renter.property = { id: propDoc.id, ...propDoc.data() } as Property;
+             }
+          }
+       }
     }
 
     return NextResponse.json(formatResponse(data));
-  } catch (err) {
+  } catch (err: any) {
     return NextResponse.json(
       { message: "Something went wrong." + err },
       { status: 500 },
@@ -82,56 +108,54 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    const body: Bill = await req.json();
     const {
       id,
       renterId,
       month,
       rent,
-      rate_electricity,
-      prev_electricity,
-      curr_electricity,
-      total_electricity,
-      rate_water,
-      prev_water,
-      curr_water,
-      total_water,
-      others,
+      utilities,
+      customCharges,
       total,
       status,
-    }: Bill = await req.json();
+    } = body;
 
-    const { data, error } = await supabase
-      .from("bills")
-      .update({
-        id,
+    if (!id) {
+       return NextResponse.json({ message: "ID is required" }, { status: 400 });
+    }
+
+    const docRef = db.collection("bills").doc(id);
+    const updateData = Object.fromEntries(
+      Object.entries({
         renterId,
         month,
         rent,
-        rate_electricity,
-        prev_electricity,
-        curr_electricity,
-        total_electricity,
-        rate_water,
-        prev_water,
-        curr_water,
-        total_water,
-        others,
+        utilities: utilities || [],
+        customCharges: customCharges || [],
         total,
         status,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error || !data) {
-      return NextResponse.json(
-        { message: error?.message || "Database operation failed." },
-        { status: 400 },
-      );
+      }).filter(([_, v]) => v !== undefined && v !== null && (typeof v !== 'number' || !Number.isNaN(v)))
+    );
+    await docRef.update(updateData);
+    
+    const updatedDoc = await docRef.get();
+    const data = { id: updatedDoc.id, ...updatedDoc.data() } as Bill;
+    
+    if (data.renterId) {
+       const renterDoc = await db.collection("renters").doc(data.renterId).get();
+       if (renterDoc.exists) {
+          data.renter = { id: renterDoc.id, ...renterDoc.data() } as Renter;
+          if (data.renter.propertyId) {
+             const propDoc = await db.collection("properties").doc(data.renter.propertyId).get();
+             if (propDoc.exists) {
+                data.renter.property = { id: propDoc.id, ...propDoc.data() } as Property;
+             }
+          }
+       }
     }
 
     return NextResponse.json(formatResponse(data));
-  } catch (err) {
+  } catch (err: any) {
     return NextResponse.json(
       { message: "Something went wrong." + err },
       { status: 500 },
@@ -142,18 +166,11 @@ export async function PUT(req: NextRequest) {
 export const formatResponse = (bill: Bill) => ({
   id: bill.id,
   renterId: bill.renterId,
-  renter: bill.renters,
+  renter: bill.renter,
   month: bill.month,
   rent: bill.rent,
-  rate_electricity: bill.rate_electricity,
-  prev_electricity: bill.prev_electricity,
-  curr_electricity: bill.curr_electricity,
-  total_electricity: bill.total_electricity,
-  rate_water: bill.rate_water,
-  prev_water: bill.prev_water,
-  curr_water: bill.curr_water,
-  total_water: bill.total_water,
-  others: bill.others,
+  utilities: bill.utilities || [],
+  customCharges: bill.customCharges || [],
   total: bill.total,
   status: bill.status,
 });

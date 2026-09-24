@@ -1,25 +1,30 @@
 import { BillStatus } from "@/lib/enum";
 import { Renter } from "./renter";
 
+export type BillUtility = {
+  utilityId: string;
+  name: string;
+  rate: number;
+  prev: number;
+  curr: number;
+  total: number;
+  unit?: string;
+};
+
+export type CustomCharge = {
+  name: string;
+  amount: number;
+};
+
 export type Bill = {
   id: string;
   renterId: string;
   renter?: Renter;
   month: Date;
   rent: number;
-  rate_electricity: number;
-  prev_electricity: number;
-  curr_electricity: number;
-  total_electricity: number;
-  rate_water: number;
-  prev_water: number;
-  curr_water: number;
-  total_water: number;
-  others: number;
+  utilities: BillUtility[];
+  customCharges: CustomCharge[];
   total: number;
   status: BillStatus;
   createdAt: Date;
-
-  //   For Supabase Purpose
-  renters?: Renter;
 };

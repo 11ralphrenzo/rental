@@ -39,7 +39,7 @@ export default function Page() {
   } = useForm<Property>();
   const [properties, setProperties] = useState<Property[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [toDelete, setToDelete] = useState<Property | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const {
     selectedProperty,
@@ -65,7 +65,7 @@ export default function Page() {
       }
     };
     getData();
-  }, [selectedProperty, isAdding, toDelete]);
+  }, [selectedProperty, isAdding, refreshKey]);
 
   useEffect(() => {
     if (selectedProperty) {
@@ -100,21 +100,20 @@ export default function Page() {
   };
 
   const onDelete = useCallback(async (data: Property) => {
-    setToDelete(data);
     toast.loading(`Deleting property...`);
     try {
       const response = await DeleteProperty(data.id);
       toast.dismiss();
       if (response) {
         toast.success(`Property deleted successfully.`);
-        setToDelete(null);
         setSelectedProperty(null);
+        setRefreshKey(k => k + 1);
       }
     } catch (err) {
       toast.dismiss();
       handleAxiosError(err, `Failed to delete property.`);
     }
-  }, []);
+  }, [setSelectedProperty]);
 
   return (
     <div className="min-h-screen bg-[#eaebed] text-zinc-900 font-sans p-4 md:p-8 antialiased selection:bg-purple-100 selection:text-purple-700 -m-4">
@@ -196,29 +195,29 @@ export default function Page() {
                         <span className="line-clamp-1">{property.address}</span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-600">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Bed className="w-3 h-3 text-zinc-400" />
-                          <span>{property.bedrooms || 0}</span>
+                    <div className="flex items-center text-[11px] font-semibold text-zinc-600">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white border border-zinc-200/60 rounded-lg shadow-sm">
+                          <Bed className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                          <span className="font-bold text-zinc-700 text-[10px] whitespace-nowrap">{property.bedrooms || 0} Bed</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Bath className="w-3 h-3 text-zinc-400" />
-                          <span>{property.bathrooms || 0}</span>
+                        <div className="flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white border border-zinc-200/60 rounded-lg shadow-sm">
+                          <Bath className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                          <span className="font-bold text-zinc-700 text-[10px] whitespace-nowrap">{property.bathrooms || 0} Bath</span>
                         </div>
                       </div>
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 ${property.status === 'Available' ? 'bg-emerald-100/80 text-emerald-800 border-emerald-200/50' : property.status === 'Occupied' ? 'bg-purple-100/80 text-purple-800 border-purple-200/50' : 'bg-amber-100/80 text-amber-800 border-amber-200/50'} text-[9px] uppercase tracking-wider font-bold rounded-full border`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${property.status === 'Available' ? 'bg-emerald-500' : property.status === 'Occupied' ? 'bg-purple-500' : 'bg-amber-500'}`} />
-                        {property.status || 'Unknown'}
-                      </span>
                     </div>
                   </div>
   
-                  <div className="mt-3 pt-3 border-t border-zinc-100 flex items-end justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-bold block mb-0.5">Monthly Rent</span>
-                      <span className="text-xl font-black tracking-tight text-zinc-900">{formatCurrency(property.monthly)}</span>
+                  <div className="mt-3 pt-3 border-t border-zinc-100 flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] uppercase tracking-wider text-zinc-400 font-bold block mb-0.5">Monthly Rent</span>
+                      <span className="text-lg font-black tracking-tight text-zinc-900">{formatCurrency(property.monthly)}</span>
                     </div>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 ${property.status === 'Available' ? 'bg-emerald-100/80 text-emerald-800 border-emerald-200/50' : property.status === 'Occupied' ? 'bg-purple-100/80 text-purple-800 border-purple-200/50' : 'bg-amber-100/80 text-amber-800 border-amber-200/50'} text-[9px] uppercase tracking-wider font-bold rounded-full border shadow-sm shrink-0`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${property.status === 'Available' ? 'bg-emerald-500' : property.status === 'Occupied' ? 'bg-purple-500' : 'bg-amber-500'}`} />
+                      {property.status || 'Unknown'}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -271,7 +270,7 @@ export default function Page() {
                       name="type"
                       render={({ field }) => (
                         <Select onValueChange={field.onChange} defaultValue={field.value || "Apartment"}>
-                          <SelectTrigger className="rounded-full border-zinc-200/50 bg-zinc-50/80 focus:ring-1 text-sm h-10 px-4">
+                          <SelectTrigger className="w-full rounded-full border-zinc-200/50 bg-zinc-50/80 focus:ring-1 text-sm h-10 px-4">
                             <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-zinc-200/50 shadow-md">
@@ -291,7 +290,7 @@ export default function Page() {
                       name="status"
                       render={({ field }) => (
                         <Select onValueChange={field.onChange} defaultValue={field.value || "Available"}>
-                          <SelectTrigger className="rounded-full border-zinc-200/50 bg-zinc-50/80 focus:ring-1 text-sm h-10 px-4">
+                          <SelectTrigger className="w-full rounded-full border-zinc-200/50 bg-zinc-50/80 focus:ring-1 text-sm h-10 px-4">
                             <SelectValue placeholder="Select status" />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-zinc-200/50 shadow-md">

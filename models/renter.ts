@@ -11,7 +11,4 @@ export type Renter = {
   start_date: Date;
   end_date?: Date;
   billing_day?: number;
-
-  // For Supabase Purpose
-  properties?: Property;
 };
