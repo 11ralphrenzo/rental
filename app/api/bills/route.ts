@@ -45,8 +45,11 @@ export async function GET(request: NextRequest) {
       billData.renter = rentersMap.get(billData.renterId);
       return billData;
     });
-    
-    data.sort((a, b) => (b.month || "").localeCompare(a.month || ""));
+    data.sort((a, b) => {
+      const dateA = a.month ? new Date(a.month).getTime() : 0;
+      const dateB = b.month ? new Date(b.month).getTime() : 0;
+      return dateB - dateA;
+    });
 
     return NextResponse.json(data.map(formatResponse));
   } catch (error: any) {
