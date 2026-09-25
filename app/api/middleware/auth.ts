@@ -1,28 +1,30 @@
 import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { adminAuth } from "@/lib/firebaseAdmin";
 
 interface DecodedToken {
   id: string;
   name: string;
-  propertyId: string;
+  email: string;
 }
 
-export function verifyToken(request: NextRequest): DecodedToken | null {
+export async function verifyToken(request: NextRequest): Promise<DecodedToken | null> {
   const authHeader = request.headers.get("Authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return null;
   }
 
-  const token = authHeader.substring(7); // Remove "Bearer " prefix
+  const token = authHeader.substring(7);
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string,
-    ) as DecodedToken;
-    return decoded;
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    return {
+      id: decodedToken.uid,
+      name: decodedToken.name || decodedToken.email || "User",
+      email: decodedToken.email || "",
+    };
   } catch (error) {
+    console.error("Token verification failed:", error);
     return null;
   }
 }

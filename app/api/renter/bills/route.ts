@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { formatResponse } from "../../bills/route";
 
 export async function GET(request: NextRequest) {
-  const tokenData = verifyToken(request);
+  const tokenData = await verifyToken(request);
 
   if (!tokenData) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

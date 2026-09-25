@@ -41,35 +41,35 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider className={cn(!user?.type && "hidden")}>
       <AppSidebar />
-      <SidebarInset>
-        <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
+      <SidebarInset className="bg-[#eaebed]">
+        <header className="sticky top-4 z-50 mt-4 mb-6 flex min-h-[56px] h-auto py-2 shrink-0 items-center gap-3 bg-white/90 backdrop-blur-xl border border-white/80 px-5 mx-4 rounded-[24px] shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)] transition-all">
+          <SidebarTrigger className="-ml-1 hover:bg-zinc-100 rounded-full transition-colors text-zinc-600 hover:text-zinc-900" />
           <Separator
             orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
+            className="h-5 w-[1px] bg-zinc-200/80"
           />
           <Breadcrumb>
-            <BreadcrumbList>
+            <BreadcrumbList className="sm:gap-2">
               {breadcrumbItems.map((item, index) => (
                 <React.Fragment key={item.href}>
                   <BreadcrumbItem>
                     {index === breadcrumbItems.length - 1 ? (
-                      <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      <BreadcrumbPage className="font-black text-zinc-900 tracking-tight text-[15px]">{item.label}</BreadcrumbPage>
                     ) : (
-                      <BreadcrumbLink href={item.href}>
+                      <BreadcrumbLink href={item.href} className="text-[13px] font-bold text-zinc-400 hover:text-zinc-800 transition-colors uppercase tracking-widest">
                         {item.label}
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
                   {index < breadcrumbItems.length - 1 && (
-                    <BreadcrumbSeparator />
+                    <BreadcrumbSeparator className="text-zinc-300" />
                   )}
                 </React.Fragment>
               ))}
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
+        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

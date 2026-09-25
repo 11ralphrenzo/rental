@@ -1,4 +1,12 @@
-import { db } from "@/lib/firebaseAdmin";
+const fs = require('fs');
+const path = require('path');
+
+const routes = ['properties', 'renters', 'bills', 'utilities'];
+const basePath = '/Users/gemangodev/Documents/rental/app/api';
+
+routes.forEach(route => {
+  const filePath = path.join(basePath, route, '[id]', 'route.ts');
+  const code = `import { db } from "@/lib/firebaseAdmin";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../../middleware/auth";
 
@@ -18,7 +26,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const docRef = db.collection("bills").doc(id);
+    const docRef = db.collection("${route}").doc(id);
     const docSnap = await docRef.get();
     
     if (!docSnap.exists) {
@@ -38,4 +46,7 @@ export async function DELETE(request: NextRequest) {
       { status: 500 },
     );
   }
-}
+}`;
+  fs.writeFileSync(filePath, code, 'utf8');
+});
+console.log("DELETE routes updated");

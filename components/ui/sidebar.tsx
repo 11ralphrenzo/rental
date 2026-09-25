@@ -477,20 +477,19 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
     />
   )
 }
-
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-3 overflow-hidden rounded-xl p-2.5 text-left text-sm font-semibold outline-hidden ring-sidebar-ring transition-all duration-200 ease-in-out focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&>span:last-child]:truncate [&>svg]:size-[18px] [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-3 overflow-hidden rounded-[20px] p-3 px-4 text-left text-[13px] font-black tracking-wide outline-hidden ring-sidebar-ring transition-all duration-300 ease-out focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:p-2.5! [&>span:last-child]:truncate [&>svg]:size-[18px] [&>svg]:shrink-0 border border-transparent",
   {
     variants: {
       variant: {
-        default: "text-zinc-600 hover:bg-zinc-100/80 hover:text-zinc-900 active:bg-zinc-200/80 data-[active=true]:bg-zinc-900 data-[active=true]:text-white data-[active=true]:shadow-md data-[active=true]:font-bold data-[state=open]:hover:bg-zinc-100/80 data-[state=open]:hover:text-zinc-900",
+        default: "text-zinc-500 hover:bg-white/60 hover:backdrop-blur-md hover:border-white/60 hover:text-zinc-900 hover:shadow-sm active:bg-white/80 data-[active=true]:bg-white/90 data-[active=true]:backdrop-blur-xl data-[active=true]:border-white/80 data-[active=true]:text-zinc-900 data-[active=true]:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] data-[state=open]:hover:bg-white/60 data-[state=open]:hover:text-zinc-900",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
       size: {
-        default: "h-8 text-sm",
-        sm: "h-7 text-xs",
-        lg: "h-12 text-sm group-data-[collapsible=icon]:p-0!",
+        default: "h-11",
+        sm: "h-9 text-xs",
+        lg: "h-12 group-data-[collapsible=icon]:p-0!",
       },
     },
     defaultVariants: {

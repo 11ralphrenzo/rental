@@ -4,15 +4,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../middleware/auth";
 
 export async function GET(request: NextRequest) {
-  const tokenData = verifyToken(request);
+  const tokenData = await verifyToken(request);
 
   if (!tokenData) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const snapshot = await db.collection("utilities").orderBy("name", "asc").get();
+    const snapshot = await db.collection("utilities").where("adminId", "==", tokenData.id).get();
     const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Utility));
+    data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     return NextResponse.json(data.map(formatResponse));
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -20,6 +21,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const tokenData = await verifyToken(req);
+  if (!tokenData) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
   try {
     const body: Utility = await req.json();
     const { name, rate, unit } = body;
@@ -27,7 +31,7 @@ export async function POST(req: NextRequest) {
     const newDoc = db.collection("utilities").doc();
     const id = newDoc.id;
     const utilityData = Object.fromEntries(
-      Object.entries({ id, name, rate, unit, createdAt: new Date() }).filter(([_, v]) => v !== undefined && v !== null && !Number.isNaN(v))
+      Object.entries({ id, name, rate, unit, adminId: tokenData.id, createdAt: new Date() }).filter(([_, v]) => v !== undefined && v !== null && !Number.isNaN(v))
     );
     
     await newDoc.set(utilityData);
@@ -42,6 +46,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const tokenData = await verifyToken(req);
+  if (!tokenData) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
   try {
     const body: Utility = await req.json();
     const { id, name, rate, unit } = body;
@@ -51,6 +58,11 @@ export async function PUT(req: NextRequest) {
     }
 
     const docRef = db.collection("utilities").doc(id);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists || (docSnap.data()?.adminId && docSnap.data()?.adminId !== tokenData.id)) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const updateData = Object.fromEntries(
       Object.entries({ name, rate, unit }).filter(([_, v]) => v !== undefined && v !== null && !Number.isNaN(v))
     );

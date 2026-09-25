@@ -5,17 +5,17 @@ import { verifyToken } from "../middleware/auth";
 import { Property } from "@/models/property";
 
 export async function GET(request: NextRequest) {
-  const tokenData = verifyToken(request);
+  const tokenData = await verifyToken(request);
 
   if (!tokenData) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const snapshot = await db.collection("renters").orderBy("name", "asc").get();
+    const snapshot = await db.collection("renters").where("adminId", "==", tokenData.id).get();
     
     // Fetch all properties to map them to renters
-    const propertiesSnapshot = await db.collection("properties").get();
+    const propertiesSnapshot = await db.collection("properties").where("adminId", "==", tokenData.id).get();
     const propertiesMap = new Map<string, Property>();
     propertiesSnapshot.docs.forEach(doc => {
       propertiesMap.set(doc.id, { id: doc.id, ...doc.data() } as Property);
@@ -23,9 +23,13 @@ export async function GET(request: NextRequest) {
 
     const data = snapshot.docs.map((doc) => {
       const renterData = { id: doc.id, ...doc.data() } as Renter;
-      renterData.property = propertiesMap.get(renterData.propertyId);
+      if (renterData.propertyId) {
+         renterData.property = propertiesMap.get(renterData.propertyId);
+      }
       return renterData;
     });
+    
+    data.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
     return NextResponse.json(data.map(formatResponse));
   } catch (error: any) {
@@ -34,6 +38,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const tokenData = await verifyToken(req);
+  if (!tokenData) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
   try {
     const body: Renter = await req.json();
     const { name, propertyId, pin_hash, active, start_date, end_date, billing_day } = body;
@@ -41,7 +48,7 @@ export async function POST(req: NextRequest) {
     const newDoc = db.collection("renters").doc();
     const id = newDoc.id;
     const renterData = Object.fromEntries(
-      Object.entries({ id, name, propertyId, pin_hash, active, start_date, end_date, billing_day, createdAt: new Date() }).filter(([_, v]) => v !== undefined && v !== null && !Number.isNaN(v))
+      Object.entries({ id, name, propertyId, pin_hash, active, start_date, end_date, billing_day, adminId: tokenData.id, createdAt: new Date() }).filter(([_, v]) => v !== undefined && v !== null && !Number.isNaN(v))
     );
     
     await newDoc.set(renterData);
@@ -49,7 +56,7 @@ export async function POST(req: NextRequest) {
     const data = { ...renterData } as unknown as Renter;
     if (propertyId) {
        const propDoc = await db.collection("properties").doc(propertyId).get();
-       if (propDoc.exists) data.property = { id: propDoc.id, ...propDoc.data() } as Property;
+       if (propDoc.exists && propDoc.data()?.adminId === tokenData.id) data.property = { id: propDoc.id, ...propDoc.data() } as Property;
     }
 
     return NextResponse.json(formatResponse(data));
@@ -62,6 +69,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const tokenData = await verifyToken(req);
+  if (!tokenData) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
   try {
     const body: Renter = await req.json();
     const { id, name, propertyId, pin_hash, active, start_date, end_date, billing_day } = body;
@@ -71,6 +81,11 @@ export async function PUT(req: NextRequest) {
     }
 
     const docRef = db.collection("renters").doc(id);
+    const docSnap = await docRef.get();
+    if (!docSnap.exists || (docSnap.data()?.adminId && docSnap.data()?.adminId !== tokenData.id)) {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const updateData = Object.fromEntries(
       Object.entries({ name, propertyId, pin_hash, active, start_date, end_date, billing_day }).filter(([_, v]) => v !== undefined && v !== null && !Number.isNaN(v))
     );
@@ -80,7 +95,7 @@ export async function PUT(req: NextRequest) {
     const data = { id: updatedDoc.id, ...updatedDoc.data() } as Renter;
     if (propertyId) {
        const propDoc = await db.collection("properties").doc(propertyId).get();
-       if (propDoc.exists) data.property = { id: propDoc.id, ...propDoc.data() } as Property;
+       if (propDoc.exists && propDoc.data()?.adminId === tokenData.id) data.property = { id: propDoc.id, ...propDoc.data() } as Property;
     }
 
     return NextResponse.json(formatResponse(data));

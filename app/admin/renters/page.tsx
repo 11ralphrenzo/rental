@@ -291,7 +291,8 @@ export default function Page() {
                     {groupRenters.map((renter) => (
                       <div
                         key={renter.id}
-                  className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-[20px] p-4 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] flex flex-col justify-between group transition-all hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]"
+                        onClick={() => openEdit(renter)}
+                  className="cursor-pointer bg-white/90 backdrop-blur-xl border border-white/80 rounded-[20px] p-4 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] flex flex-col justify-between group transition-all hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2.5">
@@ -306,7 +307,7 @@ export default function Page() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button
                         className="w-7 h-7 rounded-full bg-white border border-zinc-200/60 flex items-center justify-center text-zinc-600 hover:text-zinc-900 shadow-sm transition-all"
                         title="Copy Portal Link"
@@ -321,7 +322,7 @@ export default function Page() {
                       </button>
                       <button
                         className="w-7 h-7 rounded-full bg-white border border-zinc-200/60 flex items-center justify-center text-zinc-600 hover:text-zinc-900 shadow-sm transition-all"
-                        onClick={() => openEdit(renter)}
+                        onClick={(e) => { e.stopPropagation(); openEdit(renter); }}
                       >
                         <Pencil className="w-3 h-3" />
                       </button>
@@ -428,7 +429,7 @@ export default function Page() {
               <div className="space-y-4">
                 <h3 className="text-sm font-black text-zinc-900 border-b border-zinc-100 pb-2">Account Settings</h3>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-zinc-700">PIN Hash</label>
                     <Input
@@ -482,7 +483,7 @@ export default function Page() {
                   {errors.billing_day && <span className="text-[10px] text-red-500 font-semibold">{errors.billing_day.message}</span>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5 flex flex-col">
                     <label className="text-xs font-bold text-zinc-700">Start Date</label>
                     <Controller
