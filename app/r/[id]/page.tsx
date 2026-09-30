@@ -34,6 +34,7 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
   let messenger = null;
   let viber = null;
   let paymentChannels = [];
+  let allowRequests = true;
   if (adminId) {
     const adminDoc = await db.collection("admins").doc(adminId).get();
     if (adminDoc.exists) {
@@ -41,6 +42,7 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
       messenger = adminData?.messenger || null;
       viber = adminData?.viber || null;
       paymentChannels = adminData?.payment_channels || [];
+      allowRequests = adminData?.allow_requests ?? true;
     }
   }
 
@@ -88,6 +90,7 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
       messenger={messenger}
       viber={viber}
       paymentChannels={paymentChannels}
+      allowRequests={allowRequests}
     />
   );
 }

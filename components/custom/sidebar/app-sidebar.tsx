@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Home,
+  Inbox,
   LayoutGrid,
   QrCode,
   ReceiptText,
@@ -27,12 +29,14 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { GetAllRequests } from "@/services/admin-requests-service";
 
 const adminNavItems = [
   { name: "Properties", href: "/admin/properties", icon: Home },
   { name: "Renters", href: "/admin/renters", icon: UsersRound },
   { name: "Bills", href: "/admin/bills", icon: ReceiptText },
   { name: "Utilities", href: "/admin/utilities", icon: Zap },
+  { name: "Requests", href: "/admin/requests", icon: Inbox },
 ];
 
 const renterNavItems = [
@@ -43,7 +47,17 @@ const renterNavItems = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
   const pathname = usePathname();
-  
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    GetAllRequests()
+      .then((res) => {
+        const count = res.data.filter((r) => r.status === "pending").length;
+        setPendingCount(count);
+      })
+      .catch(() => {});
+  }, [pathname]);
+
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader className="pt-2 pb-2">
@@ -56,6 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu className="gap-2 px-2">
             {adminNavItems.map((item) => {
               const isActive = pathname.startsWith(item.href);
+              const showBadge = item.name === "Requests" && pendingCount > 0;
               return (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton 
@@ -67,9 +82,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         : "text-zinc-600 hover:bg-white/60 hover:text-zinc-900 hover:shadow-sm"
                     }`}
                   >
-                    <Link href={item.href} className="flex items-center gap-3">
-                      <item.icon className={`w-5 h-5 ${isActive ? "stroke-[2.5]" : "stroke-2"}`} />
-                      <span className="font-bold text-[13px] tracking-wide">{item.name}</span>
+                    <Link href={item.href} className="flex items-center gap-3 w-full">
+                      <item.icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "stroke-[2.5]" : "stroke-2"}`} />
+                      <span className="font-bold text-[13px] tracking-wide flex-1">{item.name}</span>
+                      {showBadge && (
+                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center ${
+                          isActive ? "bg-white text-zinc-900" : "bg-zinc-900 text-white"
+                        }`}>
+                          {pendingCount}
+                        </span>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

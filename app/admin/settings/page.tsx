@@ -50,6 +50,7 @@ const profileSchema = z.object({
   messenger: z.string().optional(),
   viber: z.string().optional(),
   payment_channels: z.array(paymentChannelSchema),
+  allow_requests: z.boolean().default(true),
 });
 
 type FormValues = z.infer<typeof profileSchema>;
@@ -299,6 +300,7 @@ export default function SettingsPage() {
       messenger: "",
       viber: "",
       payment_channels: [],
+      allow_requests: true,
     },
   });
 
@@ -316,6 +318,7 @@ export default function SettingsPage() {
             messenger: data.messenger || "",
             viber: data.viber || "",
             payment_channels: data.payment_channels || [],
+            allow_requests: data.allow_requests ?? true,
           });
         })
         .catch(console.error);
@@ -339,6 +342,7 @@ export default function SettingsPage() {
           messenger: data.messenger,
           viber: data.viber,
           payment_channels: data.payment_channels,
+          allow_requests: data.allow_requests,
         }),
       });
 
@@ -492,6 +496,30 @@ export default function SettingsPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Renter Permissions Card */}
+        <div className="bg-white rounded-[32px] p-8 shadow-[0_8px_30px_-4px_rgba(0,0,0,0.04)] border border-zinc-100 flex flex-col transition-all hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
+              <AlertCircle className="w-6 h-6 text-amber-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-zinc-900 tracking-tight">Renter Permissions</h2>
+              <p className="text-xs font-medium text-zinc-500">Manage what renters can do</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+            <div>
+              <p className="text-sm font-bold text-zinc-900">Allow Renter Requests</p>
+              <p className="text-xs text-zinc-500 mt-0.5">Let renters send maintenance, inquiry, and payment requests from their portal.</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer ml-4">
+              <input type="checkbox" className="sr-only peer" {...register("allow_requests")} />
+              <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 transition-colors"></div>
+            </label>
+          </div>
         </div>
 
         {/* Save Button */}

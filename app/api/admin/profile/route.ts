@@ -27,13 +27,14 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body: Partial<Admin> = await req.json();
-    const { messenger, viber, payment_channels } = body;
+    const { messenger, viber, payment_channels, allow_requests } = body;
 
     const docRef = db.collection("admins").doc(tokenData.id);
     await docRef.set({
       messenger: messenger || "",
       viber: viber || "",
       payment_channels: payment_channels ?? [],
+      allow_requests: allow_requests ?? true,
       updatedAt: new Date(),
     }, { merge: true });
     

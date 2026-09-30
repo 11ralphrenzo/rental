@@ -11,6 +11,8 @@ import { useEffect, useRef, useState } from "react";
 import { UtilityChart } from "@/components/custom/utility-chart";
 import { refreshRenterData } from "./actions";
 import QRCode from "react-qr-code";
+import { PublicRequestModal } from "./components/public-request-modal";
+import { MessageSquarePlus } from "lucide-react";
 
 // ── CHANNEL PRESETS ───────────────────────────────────────────────────────────
 const CHANNEL_COLORS: Record<string, { color: string; bg: string }> = {
@@ -419,12 +421,14 @@ type Props = {
   messenger?: string | null;
   viber?: string | null;
   paymentChannels?: PaymentChannel[];
+  allowRequests: boolean;
 };
 
 export function RenterPortalClient({
   renterId, renterName, propertyName, billingDay,
   daysUntilBilling, nextBillingDate, totalUnpaid,
   unpaidBills, paidBills, messenger, viber, paymentChannels = [],
+  allowRequests,
 }: Props) {
   const unpaidParsed = unpaidBills.map(b => ({ ...b, month: new Date(b.month), createdAt: b.createdAt ? new Date(b.createdAt) : null }));
   const paidParsed = paidBills.map(b => ({ ...b, month: new Date(b.month), createdAt: b.createdAt ? new Date(b.createdAt) : null }));
@@ -449,6 +453,7 @@ export function RenterPortalClient({
   const [dialogOpen, setDialogOpen] = useState(() => shouldShowDialog());
   const [fabOpen, setFabOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
+  const [requestOpen, setRequestOpen] = useState(false);
 
   const handleCloseDialog = () => {
     try {
@@ -582,6 +587,13 @@ export function RenterPortalClient({
         />
       )}
 
+      {/* Public Request Modal */}
+      <PublicRequestModal
+        renterId={renterId}
+        open={requestOpen}
+        onClose={() => setRequestOpen(false)}
+      />
+
       <div className="max-w-[640px] mx-auto space-y-4">
         {/* ── HERO: UNIFIED CARD ── */}
         <div className={`relative overflow-hidden rounded-[24px] p-5 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.06)] border ${isUrgent ? "bg-gradient-to-br from-white/90 to-red-50/60 border-red-100" : "bg-white/90 border-white/80"} backdrop-blur-xl`}>
@@ -706,6 +718,17 @@ export function RenterPortalClient({
               How to Pay
               <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
                 <CreditCard className="w-4 h-4 text-emerald-600" />
+              </div>
+            </button>
+          )}
+          {allowRequests && (
+            <button
+              onClick={() => { setRequestOpen(true); setFabOpen(false); }}
+              className="flex items-center gap-3 bg-white px-4 py-3 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:scale-105 active:scale-95 transition-all text-zinc-900 font-semibold text-[13px] border border-zinc-100 appearance-none outline-none"
+            >
+              Send a Request
+              <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center shrink-0">
+                <MessageSquarePlus className="w-4 h-4 text-white" />
               </div>
             </button>
           )}

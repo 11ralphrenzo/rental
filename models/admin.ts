@@ -14,4 +14,5 @@ export type Admin = {
   messenger?: string;
   viber?: string;
   payment_channels?: PaymentChannel[];
+  allow_requests?: boolean;
 };
