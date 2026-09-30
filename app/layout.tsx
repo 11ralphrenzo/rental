@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { AlertDialogProvider } from "@/context/AlertDialogContext";
 import { Suspense } from "react";
+import GlobalLoader from "@/components/custom/global-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Suspense fallback="Loading...">
+        <Suspense fallback={<GlobalLoader />}>
           <AlertDialogProvider>
             <AuthProvider>
               {children}
