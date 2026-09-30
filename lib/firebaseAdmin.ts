@@ -1,12 +1,7 @@
-import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import { getAuth } from "firebase-admin/auth";
+import * as admin from "firebase-admin";
 
-let app: any;
-let initError: any = null;
-
-try {
-  if (!getApps().length) {
+if (!admin.apps.length) {
+  try {
     let privateKey = process.env.FIREBASE_PRIVATE_KEY || "";
     if (privateKey) {
       privateKey = privateKey.replace(/\\n/g, "\n");
@@ -14,32 +9,18 @@ try {
         privateKey = privateKey.slice(1, -1);
       }
     }
-    
-    app = initializeApp({
-      credential: cert({
+
+    admin.initializeApp({
+      credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
         privateKey: privateKey,
       }),
     });
-  } else {
-    app = getApp();
+  } catch (error) {
+    console.error("Firebase admin initialization error", error);
   }
-} catch (error) {
-  initError = error;
-  console.error("Firebase admin initialization error", error);
 }
 
-export const db = new Proxy({}, {
-  get: (target, prop) => {
-    if (initError) throw new Error("Firebase init failed: " + (initError.message || initError));
-    return (getFirestore(app) as any)[prop];
-  }
-}) as ReturnType<typeof getFirestore>;
-
-export const adminAuth = new Proxy({}, {
-  get: (target, prop) => {
-    if (initError) throw new Error("Firebase init failed: " + (initError.message || initError));
-    return (getAuth(app) as any)[prop];
-  }
-}) as ReturnType<typeof getAuth>;
+export const db = admin.firestore();
+export const adminAuth = admin.auth();
