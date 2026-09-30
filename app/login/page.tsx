@@ -12,6 +12,7 @@ import RenterPin from "@/components/custom/renter-pin";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
+import LoginBackground from "@/components/custom/login-background";
 
 function Page() {
   const router = useRouter();
@@ -58,7 +59,8 @@ function Page() {
   };
 
   return (
-    <div className="relative flex min-h-dvh w-full items-center justify-center bg-gradient-to-b from-background via-background to-muted/30 px-4 py-12">
+    <div className="relative flex min-h-dvh w-full items-center justify-center bg-gradient-to-b from-background via-background to-muted/30 px-4 py-12 overflow-hidden">
+      <LoginBackground />
       {/* Subtle accent glow */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
@@ -70,7 +72,7 @@ function Page() {
           <div className="flex flex-col items-center space-y-8">
             <div className="flex flex-col items-center space-y-4 text-center">
               <Image
-                src="/logo.png"
+                src="/logo.svg"
                 alt="App Logo"
                 width={140}
                 height={105}

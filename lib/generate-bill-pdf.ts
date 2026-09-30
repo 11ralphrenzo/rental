@@ -33,7 +33,7 @@ function loadLogoAsDataUrl(): Promise<string> {
       resolve(canvas.toDataURL("image/png"));
     };
     img.onerror = reject;
-    img.src = "/logo.png";
+    img.src = "/logo.svg";
   });
 }
 

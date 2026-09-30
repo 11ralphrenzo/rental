@@ -17,8 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pitogo Rentals",
-  description: "Rental Management system by Pitogo",
+  title: "Korp Rentals",
+  description: "Rental Management system by Korp",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
