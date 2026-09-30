@@ -296,14 +296,14 @@ export function RenterPortalClient({
               </div>
             </div>
 
-            {/* Countdown badge */}
-            {nextDate && daysUntilBilling !== null && (
-              <div className={`flex flex-col items-center justify-center px-4 py-2.5 rounded-2xl shrink-0 ${isUrgent ? "bg-red-500 shadow-[0_4px_16px_rgba(239,68,68,0.4)]" : "bg-zinc-900 shadow-[0_4px_16px_rgba(0,0,0,0.15)]"}`}>
-                <span className={`text-3xl font-black tabular-nums leading-none tracking-tighter text-white`}>
-                  {daysUntilBilling}
+            {/* Next invoice date badge */}
+            {nextDate && (
+              <div className="flex flex-col items-end justify-center">
+                <span className={`text-xl sm:text-2xl font-black tabular-nums leading-none tracking-tight ${isUrgent ? "text-red-500 drop-shadow-sm" : "text-zinc-900"}`}>
+                  {nextDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
                 </span>
-                <span className="text-[8px] font-bold uppercase tracking-widest text-white/50 mt-0.5">
-                  {daysUntilBilling === 1 ? "Day" : "Days"}
+                <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 mt-1.5">
+                  Next Invoice
                 </span>
               </div>
             )}
@@ -331,17 +331,7 @@ export function RenterPortalClient({
             </div>
           </div>
 
-          {/* Next date + outstanding footer */}
-          {nextDate && daysUntilBilling !== null && (
-            <div className="relative z-10 flex items-center justify-between pt-3 border-t border-zinc-100">
-              <p className="text-[10px] text-zinc-400 font-semibold flex items-center gap-1">
-                <CreditCard className="w-3 h-3" /> Next invoice on {nextDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
-              </p>
-              {totalUnpaid > 0 && (
-                <span className={`text-xs font-black ${isUrgent ? "text-red-600" : "text-zinc-700"}`}>{formatCurrency(totalUnpaid)} due</span>
-              )}
-            </div>
-          )}
+
         </div>
 
         {/* ── UNPAID BILLS ── */}
