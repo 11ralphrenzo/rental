@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, use } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import {
   clearToken,
   clearUser,
@@ -10,6 +10,8 @@ import {
   saveUser,
 } from "../services/local-storage";
 import { AuthUser } from "@/models/auth";
+import { auth } from "@/lib/firebaseClient";
+import { onIdTokenChanged, signOut } from "firebase/auth";
 
 interface AuthContextType {
   accessToken: string | null;
@@ -31,11 +33,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const storedUser = getUser<AuthUser>();
 
     if (token && storedUser) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       setAccessToken(token);
       setUser(storedUser);
     }
-    // setIsLoading(false);
+
+    const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const newToken = await firebaseUser.getIdToken();
+        setAccessToken(newToken);
+        saveToken(newToken);
+
+        const currentUser = getUser<AuthUser>();
+        if (currentUser) {
+          // Normal token refresh — update the token in the stored user
+          const updatedUser = { ...currentUser, accessToken: newToken };
+          setUser(updatedUser);
+          saveUser(updatedUser);
+        } else {
+          // localStorage was cleared but Firebase session persists via IndexedDB.
+          // Reconstruct user from the Firebase auth object.
+          const restoredUser: AuthUser = {
+            id: firebaseUser.uid,
+            name: firebaseUser.displayName || firebaseUser.email || "Admin",
+            accessToken: newToken,
+            type: "1",
+          };
+          setUser(restoredUser);
+          saveUser(restoredUser);
+        }
+      } else {
+        // Firebase user signed out — clear everything
+        setAccessToken(null);
+        setUser(null);
+        clearToken();
+        clearUser();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = (token: string, newUser: AuthUser) => {
@@ -45,11 +80,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     saveUser(newUser);
   };
 
-  const logout = () => {
+  const logout = async () => {
     setAccessToken(null);
     setUser(null);
     clearUser();
     clearToken();
+    // Also sign out from Firebase to clear IndexedDB session
+    await signOut(auth).catch(() => {});
   };
 
   return (
@@ -57,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         accessToken,
         user,
-        isAuthenticated: !!accessToken,
+        isAuthenticated: !!accessToken && !!user,
         login,
         logout,
       }}

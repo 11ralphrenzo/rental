@@ -5,7 +5,7 @@ import { Bill } from "@/models/bill";
 import { Property } from "@/models/property";
 import { RenterPortalClient } from "./portal-client";
 
-export const revalidate = 0;
+export const revalidate = 3600; // Cache for 1 hour
 
 export default async function RenterPortal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -16,9 +16,32 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
   const renter = { id: renterDoc.id, ...renterDoc.data() } as Renter;
 
   let property: Property | null = null;
+  let adminId: string | null = null;
+  
   if (renter.propertyId) {
     const propDoc = await db.collection("properties").doc(renter.propertyId).get();
-    if (propDoc.exists) property = { id: propDoc.id, ...propDoc.data() } as Property;
+    if (propDoc.exists) {
+      property = { id: propDoc.id, ...propDoc.data() } as Property;
+      adminId = propDoc.data()?.adminId || null;
+    }
+  }
+  
+  // Fallback to renter.adminId if needed, though property is the source of truth
+  if (!adminId && (renter as any).adminId) {
+    adminId = (renter as any).adminId;
+  }
+  
+  let messenger = null;
+  let viber = null;
+  let paymentChannels = [];
+  if (adminId) {
+    const adminDoc = await db.collection("admins").doc(adminId).get();
+    if (adminDoc.exists) {
+      const adminData = adminDoc.data();
+      messenger = adminData?.messenger || null;
+      viber = adminData?.viber || null;
+      paymentChannels = adminData?.payment_channels || [];
+    }
   }
 
   const billsSnapshot = await db.collection("bills").where("renterId", "==", id).get();
@@ -53,6 +76,7 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
 
   return (
     <RenterPortalClient
+      renterId={id}
       renterName={renter.name}
       propertyName={property?.name || "No Property Assigned"}
       billingDay={renter.billing_day}
@@ -61,6 +85,9 @@ export default async function RenterPortal({ params }: { params: Promise<{ id: s
       totalUnpaid={totalUnpaid}
       unpaidBills={unpaidBills}
       paidBills={paidBills}
+      messenger={messenger}
+      viber={viber}
+      paymentChannels={paymentChannels}
     />
   );
 }
