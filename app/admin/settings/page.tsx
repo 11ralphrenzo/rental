@@ -50,7 +50,7 @@ const profileSchema = z.object({
   messenger: z.string().optional(),
   viber: z.string().optional(),
   payment_channels: z.array(paymentChannelSchema),
-  allow_requests: z.boolean().default(true),
+  allow_requests: z.boolean(),
 });
 
 type FormValues = z.infer<typeof profileSchema>;
