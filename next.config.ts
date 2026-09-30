@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  serverExternalPackages: ["firebase-admin", "jose", "jwks-rsa"],
+  serverExternalPackages: ["firebase-admin"],
 };
 
 export default nextConfig;

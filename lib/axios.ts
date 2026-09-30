@@ -29,6 +29,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Log the exact error from the server to help debugging Vercel issues
+    if (error.response?.data) {
+      console.error("Axios server error response:", error.response.data);
+    }
+    
     // Handle global errors, e.g., logout on 401
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
