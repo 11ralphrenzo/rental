@@ -118,7 +118,7 @@ export default function Page() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/90 backdrop-blur-xl border border-white/80 rounded-[24px] p-6 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)]">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Utilities Masterlist</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Utilities</h1>
             <p className="text-xs text-zinc-500 mt-0.5">Manage rates for Electricity, Water, and other utilities.</p>
           </div>
           <button
@@ -161,7 +161,8 @@ export default function Page() {
               {utilities?.map((utility) => (
                 <div
                   key={utility.id}
-                  className="bg-white/90 backdrop-blur-xl border border-white/80 rounded-[20px] p-4 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] flex flex-col justify-between group transition-all hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]"
+                  onClick={() => openEdit(utility)}
+                  className="cursor-pointer bg-white/90 backdrop-blur-xl border border-white/80 rounded-[20px] p-4 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)] flex flex-col justify-between group transition-all hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.08)]"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2.5">

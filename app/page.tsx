@@ -4,8 +4,10 @@ import AdminLoginForm from "@/components/custom/admin-login-form";
 
 export default function Login() {
   return (
-    <div className="w-dvw h-dvh flex items-center justify-center bg-[#F3F4F6]">
-      <AdminLoginForm />
+    <div className="relative w-dvw h-dvh flex items-center justify-center bg-[#F5F5F7]">
+      <div className="z-10 w-full px-4">
+        <AdminLoginForm />
+      </div>
     </div>
   );
 }

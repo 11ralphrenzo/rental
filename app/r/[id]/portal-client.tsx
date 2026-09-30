@@ -263,8 +263,17 @@ export function RenterPortalClient({
     setDialogOpen(false);
   };
 
+  useEffect(() => {
+    // Prevent white bars during overscroll on mobile
+    const originalBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = "#eaebed";
+    return () => {
+      document.body.style.backgroundColor = originalBg;
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#eaebed] text-zinc-900 font-sans p-4 md:p-6 antialiased selection:bg-purple-100 selection:text-purple-700">
+    <div className="min-h-screen bg-[#eaebed] text-zinc-900 font-sans px-4 pb-4 pt-0 md:p-6 antialiased selection:bg-purple-100 selection:text-purple-700">
 
       {/* Pending Bills Dialog */}
       {dialogOpen && unpaidParsed.length > 0 && (

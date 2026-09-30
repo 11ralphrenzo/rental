@@ -170,7 +170,7 @@ export default function Page() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/90 backdrop-blur-xl border border-white/80 rounded-[24px] p-6 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.04)]">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Renters Masterlist</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900">Renters</h1>
             <p className="text-xs text-zinc-500 mt-0.5">Manage and track your active and past tenants.</p>
           </div>
           
